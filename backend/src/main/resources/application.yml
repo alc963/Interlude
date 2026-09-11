@@ -1,6 +1,6 @@
 spring:
   application:
-    name: interludeapp
+    name: interlude
   datasource:
     url: jdbc:postgresql://localhost:5432/${POSTGRES_DB}
     username: ${POSTGRES_USER}
