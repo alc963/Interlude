@@ -9,7 +9,6 @@ import org.springframework.boot.CommandLineRunner;
 public class InterludeappApplication implements CommandLineRunner {
 
 	public void run(String args[]) throws Exception {
-		// Print statement when method is called
 		System.out.println("Hello world");
 	}
 
