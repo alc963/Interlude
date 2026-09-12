@@ -16,6 +16,7 @@ source "$SECRETS_FILE"
 
 rsync -avz --delete \
   --exclude='.git' \
+  --exclude='.env' \
   --exclude='backend/target' \
   --exclude='frontend/node_modules' \
   --exclude='frontend/dist' \
@@ -23,4 +24,4 @@ rsync -avz --delete \
 
 echo "Successfully transfered files :)"
 
-act --secret-file .secrets
+act --rm --secret-file .secrets
