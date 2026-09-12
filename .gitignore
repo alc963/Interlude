@@ -1,4 +1,3 @@
-# Top level .gitignore!
-
-# environment variables files
 .env
+.secrets
+.vscode
