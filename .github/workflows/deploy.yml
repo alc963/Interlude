@@ -19,10 +19,13 @@ jobs:
           script: |
             mkdir -p ~/Interlude
             cd ~/Interlude
-            if [ ! -d ".git" ]; then
-              git clone https://github.com/${{ github.repository }}.git .
-            else
-              git pull origin main
+            git config --global --add safe.directory "$(pwd)"
+            if [ "${ACT:-}" != "true" ]; then
+              if [ ! -d ".git" ]; then
+                git clone https://github.com/${{ github.repository }}.git .
+              else
+                git pull origin main
+              fi
             fi
             docker compose down
             docker compose up --build -d
