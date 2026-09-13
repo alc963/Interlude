@@ -17,17 +17,9 @@ Copy `.env.example` to `.env` and set the local PostgreSQL values. The `.env` fi
 cp .env.example .env
 ```
 
-#### Starting the Docker container
-
-Start PostgreSQL in Docker every time when starting the backend:
-
-```bash / PowerShell terminal
-docker compose up -d postgres
-```
-
 #### Start the backend locally
 
-The launcher reads `.env`, sets `DB_HOST` and `DB_PORT` defaults to `localhost` and `5432`, and runs Spring Boot directly on the host.
+The launcher starts PostgreSQL in Docker, reads `.env`, sets `DB_HOST` and `DB_PORT` defaults to `localhost` and `5432`, and runs Spring Boot directly on the host.
 
 ```bash
 ./scripts/run-backend.sh
@@ -41,10 +33,10 @@ On Windows PowerShell, run the equivalent script:
 
 The backend is available at `http://localhost:8080/`.
 
-Stop the backend with `Ctrl+C`. Stop PostgreSQL when you are finished:
+Stop the backend with `Ctrl+C`. When you are finished with the local environment, stop the Docker services:
 
 ```bash
-docker compose stop postgres
+docker compose down
 ```
 
 #### Start the full Docker environment

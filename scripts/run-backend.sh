@@ -11,6 +11,9 @@ if [[ ! -f "$env_file" ]]; then
     exit 1
 fi
 
+cd "$project_dir"
+docker compose up -d postgres
+
 export DB_HOST="${DB_HOST:-localhost}"
 export DB_PORT="${DB_PORT:-5432}"
 

@@ -1,4 +1,7 @@
 $envFile = Join-Path $PSScriptRoot "..\.env"
+$projectDir = Join-Path $PSScriptRoot ".."
+
+docker compose -f (Join-Path $projectDir "docker-compose.yml") up -d postgres
 
 $env:DB_HOST = "localhost"
 $env:DB_PORT = "5432"
