@@ -17,15 +17,17 @@ Copy `.env.example` to `.env` and set the local PostgreSQL values. The `.env` fi
 cp .env.example .env
 ```
 
-Start PostgreSQL in Docker:
+#### Starting the Docker container
 
-```bash
+Start PostgreSQL in Docker every time when starting the backend:
+
+```bash / PowerShell terminal
 docker compose up -d postgres
 ```
 
 #### Start the backend locally
 
-The launcher reads `.env`, sets `DB_HOST` and `DB_PORT` defaults to `localhost` and `5432`, and runs Spring Boot directly on the host. Run the Bash version from Git Bash, WSL, or another Bash shell:
+The launcher reads `.env`, sets `DB_HOST` and `DB_PORT` defaults to `localhost` and `5432`, and runs Spring Boot directly on the host.
 
 ```bash
 ./scripts/run-backend.sh
