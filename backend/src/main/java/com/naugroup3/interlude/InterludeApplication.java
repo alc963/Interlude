@@ -14,7 +14,8 @@ public class InterludeApplication implements CommandLineRunner {
 		return "Interlude server is online";
 	}
 
-	public void run(String args[]) throws Exception {
+	@Override
+	public void run(String... args) throws Exception {
 		System.out.println("Ready...");
 	}
 
