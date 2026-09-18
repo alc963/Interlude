@@ -10,3 +10,15 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+sentry:
+  dsn: https://3b6562bde3a4795fc256383ac2ad26e3@o4510064302227456.ingest.us.sentry.io/4512106316169216
+  send-default-pii: true
+  logs:
+    enabled: true
+  # Set traces-sample-rate to 1.0 to capture 100% of transactions for tracing.
+  traces-sample-rate: 1.0
+  # Set profile-session-sample-rate to 1.0 to profile 100% of profile sessions.
+  profile-session-sample-rate: 1.0
+  # Set profile-lifecycle to trace to automatically start and stop
+  # profiling when a transaction starts and finishes.
+  profile-lifecycle: TRACE

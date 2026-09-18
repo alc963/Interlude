@@ -74,6 +74,11 @@
 			<artifactId>spring-boot-starter-webmvc-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>io.sentry</groupId>
+			<artifactId>sentry-async-profiler</artifactId>
+			<version>8.57.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -120,5 +125,37 @@
 			</plugin>
 		</plugins>
 	</build>
-
+	<profiles>
+		<profile>
+			<id>sentry-upload</id>
+			<activation>
+				<property>
+					<name>env.SENTRY_AUTH_TOKEN</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>io.sentry</groupId>
+						<artifactId>sentry-maven-plugin</artifactId>
+						<version>0.11.0</version>
+						<extensions>true</extensions>
+						<configuration>
+							<debugSentryCli>true</debugSentryCli>
+							<org>illusion-ke</org>
+							<project>interlude</project>
+							<authToken>${env.SENTRY_AUTH_TOKEN}</authToken>
+						</configuration>
+						<executions>
+							<execution>
+								<goals>
+									<goal>uploadSourceBundle</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
