@@ -10,12 +10,16 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      secrets:
+        - sentry_token
     restart: always
     ports:
       - "127.0.0.1:8082:8080"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
+      - SENTRY_AUTO_INIT=false
       - DB_HOST=postgres
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
@@ -31,3 +35,6 @@ services:
       - backend
 volumes:
   pgdata:
+secrets:
+  sentry_token:
+    environment: SENTRY_AUTH_TOKEN
