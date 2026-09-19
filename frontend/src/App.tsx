@@ -7,7 +7,7 @@ export default function App() {
     <div className="app-container">
       {/* Navigation Bar */}
       <nav className="navbar">
-        <div className="logo">MyBrand</div>
+        <div className="logo">Interlude</div>
         <div className="nav-links">
           <a href="#home">Home</a>
         </div>
