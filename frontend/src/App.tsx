@@ -20,7 +20,7 @@ export default function App() {
 
       {/* Footer */}
       <footer className="footer">
-        <p>&copy; {new Date().getFullYear()} MyBrand. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} Interlude. All rights reserved.</p>
       </footer>
     </div>
   );
