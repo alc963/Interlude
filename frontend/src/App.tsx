@@ -5,7 +5,36 @@ import viteLogo from './assets/vite.svg'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [data, setData] = useState({ data: [] });
+  const [count, setCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleClick = async () => {
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/test', {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      console.log('result is: ', JSON.stringify(result, null, 4));
+
+      setData(result);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <>
@@ -28,6 +57,19 @@ function App() {
         >
           Count is {count}
         </button>
+        <button
+          type="button"
+          className='counter'
+          onClick={handleClick}
+        >
+          Get data
+        </button>
+
+        {isLoading && <h2>Loading...</h2>}
+
+        <div>
+          {!data && <p>JSON.stringify(data, null, 4)</p>}
+        </div>
       </section>
 
       <div className="ticks"></div>
