@@ -1,6 +1,5 @@
-// src/App.tsx
 import Hero from './pages/Hero';
-import './App.css'; // where styles are
+import './App.css';
 
 export default function App() {
   return (
