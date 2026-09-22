@@ -4,12 +4,18 @@ import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 import './App.css'
 
+// just for testing
+type DataItem = {
+  id: number,
+  message: string,
+}
+
 function App() {
-  const [data, setData] = useState({ data: [] });
+  const [data, setData] = useState<DataItem[]>([]);
   const [count, setCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleClick = async () => {
+  const getData = async () => {
     setIsLoading(true);
 
     try {
@@ -26,9 +32,37 @@ function App() {
 
       const result = await response.json();
 
-      console.log('result is: ', JSON.stringify(result, null, 4));
+      console.log('result is:\n', JSON.stringify(result, null, 2));
 
       setData(result);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const submitPost = async () => {
+    setIsLoading(true);
+    const msg = 'Submitted on count ' + count;
+
+    try {
+      const response = await fetch('/api/test?message=' + msg, {
+        method: 'POST',
+        // headers: {
+        //   Accept: 'application/json',
+        // },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      console.log('result is:\n', JSON.stringify(result, null, 2));
+
+      // setData(result);
     } catch (err) {
       console.log(err);
     } finally {
@@ -58,9 +92,16 @@ function App() {
           Count is {count}
         </button>
         <button
+          type='button'
+          className='counter'
+          onClick={submitPost}
+        >
+          Submit
+        </button>
+        <button
           type="button"
           className='counter'
-          onClick={handleClick}
+          onClick={getData}
         >
           Get data
         </button>
@@ -68,13 +109,28 @@ function App() {
         {isLoading && <h2>Loading...</h2>}
 
         <div>
-          {!data && <p>JSON.stringify(data, null, 4)</p>}
+          <table className='border-collapse border border-gray-400 '>
+            <thead>
+              <tr>
+                <th className='border border-gray-300 p-2 bg-blue-400'>id</th>
+                <th className='border border-gray-300 p-2 bg-blue-400'>message</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((item) => (
+                <tr key={item.id}>
+                  <td className='border border-gray-300 p-2 bg-blue-300'>{item.id}</td>
+                  <td className='border border-gray-300 p-2 bg-blue-300'>{item.message}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
 
       <div className="ticks"></div>
 
-      <section id="next-steps">
+      {/* <section id="next-steps">
         <div id="docs">
           <svg className="icon" role="presentation" aria-hidden="true">
             <use href="/icons.svg#documentation-icon"></use>
@@ -153,10 +209,10 @@ function App() {
             </li>
           </ul>
         </div>
-      </section>
+      </section> */}
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+      {/* <div className="ticks"></div>
+      <section id="spacer"></section> */}
     </>
   )
 }
