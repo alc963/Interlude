@@ -15,13 +15,14 @@ function MoodPieChart({ data, isAnimationActive = true }: MoodPieChartProps) {
     <PieChart style={{ width: '100%', maxWidth: '500px', maxHeight: '80vh', aspectRatio: 2 }} responsive>
       <Pie
         dataKey="value"
+        nameKey="name"
         startAngle={180}
         endAngle={0}
         data={data}
         cx="50%"
         cy="100%"
         outerRadius="120%"
-        label
+        label={({ name }) => name}
         isAnimationActive={isAnimationActive}
       />
     </PieChart>
