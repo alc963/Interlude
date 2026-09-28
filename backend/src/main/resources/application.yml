@@ -8,8 +8,10 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     show-sql: true
+  flyway:
+    enabled: true
 sentry:
   dsn: https://3b6562bde3a4795fc256383ac2ad26e3@o4510064302227456.ingest.us.sentry.io/4512106316169216
   send-default-pii: true
