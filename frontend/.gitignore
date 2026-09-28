@@ -25,3 +25,7 @@ dist-ssr
 
 # Vitest reports and artifacts
 .vitest/
+
+# Dev files/playground
+dev/*
+!dev/Payground.tsx.example
