@@ -1,6 +1,7 @@
 package com.naugroup3.interlude.services.ITunes;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -31,7 +32,15 @@ public class ITunesDatabase {
         return collection_repo.findByArtist_id(artist_id);
     }
 
+    public Optional<ITunesCollection> get_artist_album(Long artist_id, String album) {
+        return collection_repo.findByArtist_idAndName(artist_id, album);
+    }
+
     public List<ITunesTrack> get_album_tracks(Long collection_id) {
         return track_repo.findByCollection_id(collection_id);
+    }
+
+    public Optional<ITunesTrack> get_album_track(Long collection_id, String track) {
+        return track_repo.findByCollection_idAndName(collection_id, track);
     }
 }
