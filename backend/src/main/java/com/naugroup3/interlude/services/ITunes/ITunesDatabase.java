@@ -8,12 +8,17 @@ import org.springframework.stereotype.Service;
 import com.naugroup3.interlude.models.itunes.ITunesArtist;
 import com.naugroup3.interlude.models.itunes.ITunesCollection;
 import com.naugroup3.interlude.models.itunes.ITunesTrack;
+import com.naugroup3.interlude.models.itunes.ServiceIdToITunesTrack;
 import com.naugroup3.interlude.repositories.itunes.ITunesArtistRepository;
 import com.naugroup3.interlude.repositories.itunes.ITunesCollectionRepository;
+import com.naugroup3.interlude.repositories.itunes.ITunesTrackProcessedRepository;
 import com.naugroup3.interlude.repositories.itunes.ITunesTrackRepository;
+import com.naugroup3.interlude.repositories.itunes.ServiceIdToITunesTrackRepo;
 
 @Service
 public class ITunesDatabase {
+    private ServiceIdToITunesTrackRepo service_id_to_itunes_track_repo;
+    private ITunesTrackProcessedRepository track_processed_repo;
     private ITunesTrackRepository track_repo;
     private ITunesCollectionRepository collection_repo;
     private ITunesArtistRepository artist_repo;
@@ -52,5 +57,13 @@ public class ITunesDatabase {
 
     public Optional<ITunesTrack> get_album_track(Long collection_id, String track) {
         return track_repo.findByCollection_idAndName(collection_id, track);
+    }
+
+    public Optional<ServiceIdToITunesTrack> service_id_to_itunes_id(String service_id) {
+        return service_id_to_itunes_track_repo.findById(service_id);
+    }
+
+    public Boolean is_track_processed(Long track_id) {
+        return track_processed_repo.existsById(track_id);
     }
 }
