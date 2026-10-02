@@ -27,5 +27,4 @@ dist-ssr
 .vitest/
 
 # Dev files/playground
-dev/*
-!dev/Payground.tsx.example
+dev/
