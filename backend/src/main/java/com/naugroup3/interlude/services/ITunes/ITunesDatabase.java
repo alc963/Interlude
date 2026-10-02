@@ -24,6 +24,16 @@ public class ITunesDatabase {
         this.artist_repo = artist_repo;
     }
 
+    public void insert_artist(ITunesArtist artist) {
+        this.artist_repo.save(artist);
+    }
+    public void insert_album(ITunesCollection collection) {
+        this.collection_repo.save(collection);
+    }
+    public void insert_track(ITunesTrack track) { 
+        this.track_repo.save(track);
+    }
+
     public List<ITunesArtist> get_artists(String name) {
         return artist_repo.findByName(name);
     }
