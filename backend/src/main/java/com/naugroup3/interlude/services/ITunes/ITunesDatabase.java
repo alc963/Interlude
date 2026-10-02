@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.naugroup3.interlude.models.itunes.ITunesArtist;
 import com.naugroup3.interlude.models.itunes.ITunesCollection;
 import com.naugroup3.interlude.models.itunes.ITunesTrack;
+import com.naugroup3.interlude.models.itunes.ITunesTrackProcessed;
 import com.naugroup3.interlude.models.itunes.ServiceIdToITunesTrack;
 import com.naugroup3.interlude.repositories.itunes.ITunesArtistRepository;
 import com.naugroup3.interlude.repositories.itunes.ITunesCollectionRepository;
@@ -37,6 +38,15 @@ public class ITunesDatabase {
     }
     public void insert_track(ITunesTrack track) { 
         this.track_repo.save(track);
+    }
+    public void insert_service_id_track_id_mapping(ServiceIdToITunesTrack mapping) { 
+        this.service_id_to_itunes_track_repo.save(mapping);
+    }
+    public void insert_service_id_track_id_mapping(String service_id, Long track_id) { 
+        this.insert_service_id_track_id_mapping(new ServiceIdToITunesTrack(service_id, track_id));
+    }
+    public void insert_track_processed(ITunesTrackProcessed track_processed) { 
+        this.track_processed_repo.save(track_processed);
     }
 
     public List<ITunesArtist> get_artists(String name) {
