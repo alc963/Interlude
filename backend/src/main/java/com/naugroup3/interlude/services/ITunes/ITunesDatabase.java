@@ -1,18 +1,25 @@
 package com.naugroup3.interlude.services.ITunes;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.naugroup3.interlude.models.itunes.ITunesArtist;
 import com.naugroup3.interlude.models.itunes.ITunesCollection;
 import com.naugroup3.interlude.models.itunes.ITunesTrack;
+import com.naugroup3.interlude.models.itunes.ITunesTrackProcessed;
+import com.naugroup3.interlude.models.itunes.ServiceIdToITunesTrack;
 import com.naugroup3.interlude.repositories.itunes.ITunesArtistRepository;
 import com.naugroup3.interlude.repositories.itunes.ITunesCollectionRepository;
+import com.naugroup3.interlude.repositories.itunes.ITunesTrackProcessedRepository;
 import com.naugroup3.interlude.repositories.itunes.ITunesTrackRepository;
+import com.naugroup3.interlude.repositories.itunes.ServiceIdToITunesTrackRepo;
 
 @Service
 public class ITunesDatabase {
+    private ServiceIdToITunesTrackRepo service_id_to_itunes_track_repo;
+    private ITunesTrackProcessedRepository track_processed_repo;
     private ITunesTrackRepository track_repo;
     private ITunesCollectionRepository collection_repo;
     private ITunesArtistRepository artist_repo;
@@ -23,6 +30,25 @@ public class ITunesDatabase {
         this.artist_repo = artist_repo;
     }
 
+    public void save_artist(ITunesArtist artist) {
+        this.artist_repo.save(artist);
+    }
+    public void save_album(ITunesCollection collection) {
+        this.collection_repo.save(collection);
+    }
+    public void save_track(ITunesTrack track) { 
+        this.track_repo.save(track);
+    }
+    public void save_service_id_track_id_mapping(ServiceIdToITunesTrack mapping) { 
+        this.service_id_to_itunes_track_repo.save(mapping);
+    }
+    public void save_service_id_track_id_mapping(String service_id, Long track_id) { 
+        this.save_service_id_track_id_mapping(new ServiceIdToITunesTrack(service_id, track_id));
+    }
+    public void save_track_processed(ITunesTrackProcessed track_processed) { 
+        this.track_processed_repo.save(track_processed);
+    }
+
     public List<ITunesArtist> get_artists(String name) {
         return artist_repo.findByName(name);
     }
@@ -31,7 +57,23 @@ public class ITunesDatabase {
         return collection_repo.findByArtist_id(artist_id);
     }
 
+    public Optional<ITunesCollection> get_artist_album(Long artist_id, String album) {
+        return collection_repo.findByArtist_idAndCleanedName(artist_id, album);
+    }
+
     public List<ITunesTrack> get_album_tracks(Long collection_id) {
         return track_repo.findByCollection_id(collection_id);
+    }
+
+    public Optional<ITunesTrack> get_album_track(Long collection_id, String track) {
+        return track_repo.findByCollection_idAndName(collection_id, track);
+    }
+
+    public Optional<ServiceIdToITunesTrack> service_id_to_itunes_id(String service_id) {
+        return service_id_to_itunes_track_repo.findById(service_id);
+    }
+
+    public Boolean is_track_processed(Long track_id) {
+        return track_processed_repo.existsById(track_id);
     }
 }
