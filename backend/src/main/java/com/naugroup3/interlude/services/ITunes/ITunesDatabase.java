@@ -30,22 +30,22 @@ public class ITunesDatabase {
         this.artist_repo = artist_repo;
     }
 
-    public void insert_artist(ITunesArtist artist) {
+    public void save_artist(ITunesArtist artist) {
         this.artist_repo.save(artist);
     }
-    public void insert_album(ITunesCollection collection) {
+    public void save_album(ITunesCollection collection) {
         this.collection_repo.save(collection);
     }
-    public void insert_track(ITunesTrack track) { 
+    public void save_track(ITunesTrack track) { 
         this.track_repo.save(track);
     }
-    public void insert_service_id_track_id_mapping(ServiceIdToITunesTrack mapping) { 
+    public void save_service_id_track_id_mapping(ServiceIdToITunesTrack mapping) { 
         this.service_id_to_itunes_track_repo.save(mapping);
     }
-    public void insert_service_id_track_id_mapping(String service_id, Long track_id) { 
-        this.insert_service_id_track_id_mapping(new ServiceIdToITunesTrack(service_id, track_id));
+    public void save_service_id_track_id_mapping(String service_id, Long track_id) { 
+        this.save_service_id_track_id_mapping(new ServiceIdToITunesTrack(service_id, track_id));
     }
-    public void insert_track_processed(ITunesTrackProcessed track_processed) { 
+    public void save_track_processed(ITunesTrackProcessed track_processed) { 
         this.track_processed_repo.save(track_processed);
     }
 

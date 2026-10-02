@@ -114,18 +114,18 @@ public class ITunesProxy {
 
     private CompletableFuture<Expected<List<ITunesArtist>, HttpResponse<String>>> execute_search_artists(String artist) {
         return CompletableFuture
-            .supplyAsync(() -> to_database_model(clean_result(search_api(ITunesProxyArtist.class, artist, ITunesEntity.musicArtist, SEARCH_LIMIT)), ITunesArtist::new, database::insert_artist), http_executor)
+            .supplyAsync(() -> to_database_model(clean_result(search_api(ITunesProxyArtist.class, artist, ITunesEntity.musicArtist, SEARCH_LIMIT)), ITunesArtist::new, database::save_artist), http_executor)
             .exceptionally(t -> empty_result());
     }
     private CompletableFuture<Expected<List<ITunesCollection>, HttpResponse<String>>> execute_artist_albums(AlbumQuery query) {
         return CompletableFuture
-            .supplyAsync(() -> to_database_model(clean_result(lookup_api(ITunesProxyCollection.class, query.artist_id(), ITunesEntity.album, LOOKUP_LIMIT)), ITunesCollection::new, database::insert_album), http_executor)
+            .supplyAsync(() -> to_database_model(clean_result(lookup_api(ITunesProxyCollection.class, query.artist_id(), ITunesEntity.album, LOOKUP_LIMIT)), ITunesCollection::new, database::save_album), http_executor)
             .exceptionally(t -> empty_result());
     }
     // TODO add batch executing to compact multiple collection to track requests
     private CompletableFuture<Expected<List<ITunesTrack>, HttpResponse<String>>> execute_album_tracks(TrackQuery query) {
         return CompletableFuture
-            .supplyAsync(() -> to_database_model(clean_result(lookup_api(ITunesProxyTrack.class, query.collection_id(), ITunesEntity.song, LOOKUP_LIMIT)), ITunesTrack::new, database::insert_track), http_executor)
+            .supplyAsync(() -> to_database_model(clean_result(lookup_api(ITunesProxyTrack.class, query.collection_id(), ITunesEntity.song, LOOKUP_LIMIT)), ITunesTrack::new, database::save_track), http_executor)
             .exceptionally(t -> empty_result());
     }
 

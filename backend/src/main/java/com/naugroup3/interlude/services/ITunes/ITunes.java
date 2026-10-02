@@ -35,7 +35,7 @@ public class ITunes {
         find_track(track).thenAccept(found -> {
             if(found == null) return;
 
-            database.insert_service_id_track_id_mapping(track.service_uri(), found.getId());
+            database.save_service_id_track_id_mapping(track.service_uri(), found.getId());
             if(database.is_track_processed(found.getId())) return;
             for(Consumer<ITunesTrack> on_found_track_callback : on_found_track_callbacks) {
                 on_found_track_callback.accept(found);
