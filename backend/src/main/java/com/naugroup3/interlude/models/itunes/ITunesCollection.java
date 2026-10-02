@@ -1,7 +1,6 @@
 package com.naugroup3.interlude.models.itunes;
 
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
