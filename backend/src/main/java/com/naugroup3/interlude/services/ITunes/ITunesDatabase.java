@@ -48,7 +48,7 @@ public class ITunesDatabase {
     }
 
     public Optional<ITunesCollection> get_artist_album(Long artist_id, String album) {
-        return collection_repo.findByArtist_idAndName(artist_id, album);
+        return collection_repo.findByArtist_idAndCleanedName(artist_id, album);
     }
 
     public List<ITunesTrack> get_album_tracks(Long collection_id) {
