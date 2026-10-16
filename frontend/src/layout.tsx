@@ -1,4 +1,4 @@
-// src/Layout.tsx
+// layout for every page, including the navbar and footer
 import { NavLink, Outlet } from 'react-router'
 import './App.css'
 
