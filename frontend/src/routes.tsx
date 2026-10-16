@@ -1,4 +1,3 @@
-// src/routes.tsx
 import { createBrowserRouter } from 'react-router'
 import Layout from './layout'
 import Hero from './pages/Hero'
