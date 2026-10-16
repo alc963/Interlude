@@ -9,14 +9,19 @@ services:
       - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   backend:
     build:
       context: ./backend
       secrets:
         - sentry_token
     restart: always
-    ports:
-      - "127.0.0.1:8082:8080"
+    expose:
+      - "8080"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - SENTRY_AUTO_INIT=false
@@ -26,13 +31,31 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     depends_on:
       - postgres
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
   frontend:
     build: ./frontend
     restart: always
+    expose:
+      - "80"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:80/ || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 10s
+  proxy:
+    image: nginx:alpine
+    restart: always
     ports:
       - "127.0.0.1:8081:80"
-    depends_on:
-      - backend
+      - "127.0.0.1:8082:8080"
+    volumes:
+      - ./proxy/nginx.conf:/etc/nginx/conf.d/default.conf:ro
 volumes:
   pgdata:
 secrets:

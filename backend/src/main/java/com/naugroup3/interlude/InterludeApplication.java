@@ -14,6 +14,7 @@ import org.springframework.boot.CommandLineRunner;
 public class InterludeApplication implements CommandLineRunner {
 
 	private final ITunesDatabase itunes_database;
+	private boolean is_ready = false;
 
     public InterludeApplication(ITunesDatabase itunes_database) {
         this.itunes_database = itunes_database;
@@ -24,8 +25,14 @@ public class InterludeApplication implements CommandLineRunner {
 		return "Interlude server is online";
 	}
 
+	@GetMapping("/health")
+	public boolean health() {
+		return is_ready;
+	}
+
 	public void run(String args[]) throws Exception {
 		System.out.println("Ready...");
+		is_ready = true;
 	}
 
 	public static void main(String[] args) {
