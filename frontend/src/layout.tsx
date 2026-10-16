@@ -8,7 +8,7 @@ export default function Layout() {
       <nav className="navbar">
         <NavLink to="/" className="logo">Interlude</NavLink>
         <div className="nav-links">
-          <NavLink to="/history">History</NavLink>
+          <NavLink to="/history">Page</NavLink>
           <NavLink to="/discover">Discover</NavLink>
           <NavLink to="/journal">Journal</NavLink>
         </div>
