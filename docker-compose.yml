@@ -30,6 +30,9 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - SECRET_KEY=${SECRET_KEY}
+      - OTEL_LOGS_EXPORTER=none
+      - OTEL_TRACES_EXPORTER=none
+      - OTEL_METRICS_EXPORTER=none
     depends_on:
       - postgres
     healthcheck:
