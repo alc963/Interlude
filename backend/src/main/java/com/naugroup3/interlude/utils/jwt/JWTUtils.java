@@ -18,7 +18,7 @@ public class JWTUtils {
     private String SECRET_KEY;
     // TODO add TimeUtils
     // 60 days ms
-    private final long EXPIRATION_TIME_MS = 1000 * 60 * 60 * 24 * 60;
+    private final long EXPIRATION_TIME_MS = 1000L * 60L * 60L * 24L * 60L;
 
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
