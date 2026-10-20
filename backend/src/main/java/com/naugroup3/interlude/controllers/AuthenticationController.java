@@ -13,10 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import com.naugroup3.interlude.models.User;
 import com.naugroup3.interlude.repositories.UserRepository;
+import com.naugroup3.interlude.utils.Validator;
 import com.naugroup3.interlude.utils.jwt.JWTUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -26,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthenticationController {
     public record LoginRequest(@NotBlank String email, @NotBlank @Size(min = 8) String password) {}
-    public record SignupRequest(@NotBlank String username, @Email @NotBlank String email, @NotBlank @Size(min = 8) String password) {}
+    public record SignupRequest(@NotBlank @Pattern(regexp = Validator.USERNAME_REGEX, message = "Username must be 3-16 characters: letters, numbers, _ or -") String username, @Email @NotBlank String email, @NotBlank @Size(min = 8) String password) {}
 
     private final UserRepository user_repository;
     private final PasswordEncoder password_encoder;
