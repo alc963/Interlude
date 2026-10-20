@@ -14,3 +14,7 @@ export interface LoginRequest {
 export interface LoginResponse {
     token: string;
 }
+
+export interface UsernameCheckResponse {
+    exists: boolean;
+}

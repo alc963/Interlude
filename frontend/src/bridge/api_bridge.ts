@@ -1,4 +1,4 @@
-import type { LoginRequest, LoginResponse, SignupRequest, SignupResponse } from "./types/auth";
+import type { LoginRequest, LoginResponse, SignupRequest, SignupResponse, UsernameCheckResponse } from "./types/auth";
 import { jwt_expired } from "./validator";
 
 type ApiResponse<T> = Promise<T|Response>;
@@ -23,6 +23,15 @@ export const ApiBridge = {
             localStorage.removeItem(JWT_LOCAL_STORAGE_KEY);
             return false;
         }
+    },
+
+    async get<Res>(path: string, params: Record<string, string> = {}): ApiResponse<Res> {
+        const query = new URLSearchParams(params).toString();
+        const response = await fetch(`${BASE_URL}${path}${query ? `?${query}` : ""}`, {
+            headers: ApiBridge.auth_headers(),
+        });
+        if (!response.ok) return response;
+        return await response.json();
     },
 
     async post<Req, Res>(path: string, body: Req, only_text = false): ApiResponse<Res> {
@@ -50,6 +59,10 @@ export const ApiBridge = {
     },
     async login(request: LoginRequest): ApiResponse<LoginResponse> {
         return await ApiBridge.post_token("/auth/login", request);
+    },
+
+    async username_check(username: string): ApiResponse<UsernameCheckResponse> {
+        return await ApiBridge.get("/auth/username-check", { username });
     },
 
     auth_headers(): Record<string, string> {
