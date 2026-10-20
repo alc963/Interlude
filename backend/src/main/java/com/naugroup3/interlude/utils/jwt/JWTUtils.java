@@ -16,8 +16,9 @@ import io.jsonwebtoken.security.Keys;
 public class JWTUtils {
     @Value("${jwt.secret}")
     private String SECRET_KEY;
-    // one week ms
-    private final long EXPIRATION_TIME_MS = 1000 * 60 * 60 * 24 * 7;
+    // TODO add TimeUtils
+    // 60 days ms
+    private final long EXPIRATION_TIME_MS = 1000 * 60 * 60 * 24 * 60;
 
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
