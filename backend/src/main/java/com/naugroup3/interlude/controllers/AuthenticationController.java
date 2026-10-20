@@ -18,10 +18,15 @@ import jakarta.validation.constraints.Size;
 
 import com.naugroup3.interlude.models.User;
 import com.naugroup3.interlude.repositories.UserRepository;
+import com.naugroup3.interlude.services.UsernameService;
 import com.naugroup3.interlude.utils.Validator;
 import com.naugroup3.interlude.utils.jwt.JWTUtils;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.dao.DataIntegrityViolationException;
 
 @RestController
 @RequestMapping("/auth")
@@ -30,20 +35,38 @@ public class AuthenticationController {
     public record LoginRequest(@NotBlank String email, @NotBlank @Size(min = 8) String password) {}
     public record SignupRequest(@NotBlank @Pattern(regexp = Validator.USERNAME_REGEX, message = "Username must be 3-16 characters: letters, numbers, _ or -") String username, @Email @NotBlank String email, @NotBlank @Size(min = 8) String password) {}
 
+    public record UsernameCheckResponse(boolean exists) {}
+
     private final UserRepository user_repository;
+    private final UsernameService username_service;
     private final PasswordEncoder password_encoder;
     private final AuthenticationManager authentication_manager;
     private final JWTUtils jwt_utils;
+
+    @GetMapping("/username-check")
+    public UsernameCheckResponse username_check(@RequestParam String username) {
+        if(!Validator.validate_username(username))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid username");
+        return new UsernameCheckResponse(username_service.exists(username));
+    }
 
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@Valid @RequestBody SignupRequest request) {
         if(user_repository.existsByEmail(request.email()))
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already used");
+        if(username_service.exists(request.username()))
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already used");
         User user = new User();
         user.setUsername(request.username());
         user.setEmail(request.email());
         user.setPassword_hash(password_encoder.encode(request.password()));
-        user_repository.save(user);
+        try {
+            user_repository.save(user);
+        } catch (DataIntegrityViolationException e) {
+            // race condition
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Email or username already used");
+        }
+        username_service.insert(user.getUsername());
         return ResponseEntity.status(HttpStatus.CREATED).body(jwt_utils.generate_token(user.getEmail()));
     }
 
