@@ -3,7 +3,10 @@ import type { LoginRequest, LoginResponse, SignupRequest, SignupResponse } from 
 type ApiResponse<T> = Promise<T|Response>;
 
 const JWT_LOCAL_STORAGE_KEY: string = "JWT";
-const BASE_URL: string = import.meta.env.VITE_API_URL ?? "http://localhost:8080";
+const BASE_URL: string =
+    window.location.hostname === "interlude.sumii.me"
+        ? "https://iapi.sumii.me"
+        : "http://localhost:8082";
 
 export const ApiBridge = {
     jwt: null as string | null,
