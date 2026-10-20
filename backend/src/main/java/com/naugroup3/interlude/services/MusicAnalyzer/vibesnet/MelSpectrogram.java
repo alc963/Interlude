@@ -15,7 +15,7 @@ final class MelSpectrogram {
     private static final double AMIN = 1e-10;
 
     private static final double[] WINDOW = hann(WIN);
-    private static final float[][] FILTERS = melFilters();
+    private static final float[][] FILTERS = mel_filters();
 
     private MelSpectrogram() {}
 
@@ -71,28 +71,28 @@ final class MelSpectrogram {
         return w;
     }
 
-    private static double hzToMel(double hz) {
+    private static double hz_to_mel(double hz) {
         double fSp = 200.0 / 3, minLogHz = 1000.0, logStep = Math.log(6.4) / 27.0;
         double minLogMel = minLogHz / fSp;
         return hz >= minLogHz ? minLogMel + Math.log(hz / minLogHz) / logStep : hz / fSp;
     }
 
-    private static double melToHz(double mel) {
+    private static double mel_to_hz(double mel) {
         double fSp = 200.0 / 3, minLogHz = 1000.0, logStep = Math.log(6.4) / 27.0;
         double minLogMel = minLogHz / fSp;
         return mel >= minLogMel ? minLogHz * Math.exp(logStep * (mel - minLogMel)) : mel * fSp;
     }
 
-    private static float[][] melFilters() {
+    private static float[][] mel_filters() {
         int bins = N_FFT / 2 + 1;
         double[] fft = new double[bins];
         for (int k = 0; k < bins; k++) {
             fft[k] = (double) k * SR / N_FFT;
         }
-        double melMin = hzToMel(F_MIN), melMax = hzToMel(F_MAX);
+        double melMin = hz_to_mel(F_MIN), melMax = hz_to_mel(F_MAX);
         double[] pts = new double[N_MELS + 2];
         for (int i = 0; i < pts.length; i++) {
-            pts[i] = melToHz(melMin + (melMax - melMin) * i / (N_MELS + 1));
+            pts[i] = mel_to_hz(melMin + (melMax - melMin) * i / (N_MELS + 1));
         }
         float[][] w = new float[N_MELS][bins];
         for (int m = 0; m < N_MELS; m++) {
