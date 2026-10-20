@@ -18,3 +18,13 @@ export function validate_password(password: string): ValidationError {
     if(typeof password !== "string") return PASSWORD_ERROR;
     return password.length >= 8 ? null : PASSWORD_ERROR;
 }
+
+export function jwt_expired(token: string | null): boolean {
+    try {
+        if(token === null) return true;
+        const payload = JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")));
+        return typeof payload.exp === "number" && payload.exp * 1000 <= Date.now();
+    } catch {
+        return true;
+    }
+}

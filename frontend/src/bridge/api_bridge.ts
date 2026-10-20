@@ -1,4 +1,5 @@
 import type { LoginRequest, LoginResponse, SignupRequest, SignupResponse } from "./types/auth";
+import { jwt_expired } from "./validator";
 
 type ApiResponse<T> = Promise<T|Response>;
 
@@ -11,8 +12,17 @@ const BASE_URL: string =
 export const ApiBridge = {
     jwt: null as string | null,
 
-    async initialize() {
-        ApiBridge.jwt = localStorage.getItem(JWT_LOCAL_STORAGE_KEY);
+    // returns true if JWT was loaded
+    initialize() {
+        const local_jwt = localStorage.getItem(JWT_LOCAL_STORAGE_KEY);
+        if(!jwt_expired(local_jwt)) {
+            ApiBridge.jwt = local_jwt;
+            return true;
+        }
+        else {
+            localStorage.removeItem(JWT_LOCAL_STORAGE_KEY);
+            return false;
+        }
     },
 
     async post<Req, Res>(path: string, body: Req, only_text = false): ApiResponse<Res> {
