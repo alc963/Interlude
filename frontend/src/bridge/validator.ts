@@ -1,14 +1,20 @@
-export function validate_username(username: string): boolean {
-    if(typeof username !== "string") return false;
+export type ValidationError = string | null;
+
+export const USERNAME_ERROR = "Username must be 3-16 characters: letters, numbers, _ or -";
+export const EMAIL_ERROR = "Enter a valid email address";
+export const PASSWORD_ERROR = "Password must be at least 8 characters";
+
+export function validate_username(username: string): ValidationError {
+    if(typeof username !== "string") return USERNAME_ERROR;
     const username_regex = /^[a-zA-Z0-9_-]{3,16}$/;
-    return username_regex.test(username);
+    return username_regex.test(username) ? null : USERNAME_ERROR;
 }
-export function validate_email(email: string): boolean {
-    if(typeof email !== "string") return false;
+export function validate_email(email: string): ValidationError {
+    if(typeof email !== "string") return EMAIL_ERROR;
     const email_regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return email_regex.test(email);
+    return email_regex.test(email) ? null : EMAIL_ERROR;
 }
-export function validate_password(password: string): boolean {
-    if(typeof password !== "string") return false;
-    return password.length >= 8;
+export function validate_password(password: string): ValidationError {
+    if(typeof password !== "string") return PASSWORD_ERROR;
+    return password.length >= 8 ? null : PASSWORD_ERROR;
 }
