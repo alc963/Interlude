@@ -1,5 +1,7 @@
 package com.naugroup3.interlude.utils.jwt;
 
+import java.util.Collections;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -9,7 +11,9 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import com.naugroup3.interlude.repositories.UserRepository;
 
 @Configuration
 public class ApplicationConfiguration {
@@ -30,9 +34,13 @@ public class ApplicationConfiguration {
         return new BCryptPasswordEncoder();
     }
 
-    // TODO: create user model @Chairmichael
     @Bean
-    public UserDetailsService user_details_service() {
-        return new InMemoryUserDetailsManager();
+    public UserDetailsService user_details_service(UserRepository user_repository) {
+        return email -> user_repository.findByEmail(email)
+            .map(user -> org.springframework.security.core.userdetails.User.withUsername(user.getEmail())
+                .password(user.getPassword_hash())
+                .authorities(Collections.emptyList())
+                .build())
+            .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
     }
 }
