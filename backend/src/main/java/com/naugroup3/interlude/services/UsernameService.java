@@ -30,11 +30,13 @@ public class UsernameService {
     }
 
     public boolean exists(String username) {
+        if(username == null) return false;
         if(!bloom_filter.mightContain(username)) return false;
         return user_repository.existsByUsername(username);
     }
 
     public void insert(String username) {
+        if(username == null) return;
         bloom_filter.put(username);
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -33,27 +34,25 @@ public class JWTUtils {
             .compact();
     }
 
-    public String extract_username(String token) {
+    private Claims get_token_body(String token) {
         return Jwts.parserBuilder()
             .setSigningKey(getSigningKey())
             .build()
             .parseClaimsJws(token)
-            .getBody()
-            .getSubject();
+            .getBody();
+    }
+
+    public String extract_email(String token) {
+        return get_token_body(token).getSubject();
     }
 
     private boolean is_token_expired(String token) {
-        final Date expiration = Jwts.parserBuilder()
-            .setSigningKey(getSigningKey())
-            .build()
-            .parseClaimsJws(token)
-            .getBody()
-            .getExpiration();
+        final Date expiration = get_token_body(token).getExpiration();
         return expiration.before(new Date());
     }
 
     public boolean validate_token(String token, UserDetails user_details) {
-        final String username = extract_username(token);
+        final String username = extract_email(token);
         return (username.equals(user_details.getUsername()) && !is_token_expired(token));
     }
 }

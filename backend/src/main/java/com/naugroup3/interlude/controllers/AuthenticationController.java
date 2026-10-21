@@ -32,8 +32,20 @@ import org.springframework.dao.DataIntegrityViolationException;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthenticationController {
-    public record LoginRequest(@NotBlank String email, @NotBlank @Size(min = 8) String password) {}
-    public record SignupRequest(@NotBlank @Pattern(regexp = Validator.USERNAME_REGEX, message = "Username must be 3-16 characters: letters, numbers, _ or -") String username, @Email @NotBlank String email, @NotBlank @Size(min = 8) String password) {}
+    public record LoginRequest(
+        @NotBlank(message = "Email can't be blank") String email, 
+        @NotBlank @Size(min = 8, message = "Password must be at least 8 charcters long") String password) {}
+    
+    public record SignupRequest(
+        @NotBlank(message = "Username can't be blank") 
+            @Pattern(regexp = Validator.USERNAME_REGEX, message = "Username must be 3-16 characters: letters, numbers, _ or -")
+                String username,
+        @Email(message = "Invalid email format")
+            @NotBlank(message = "Email can't be blank")
+                String email,
+        @NotBlank(message = "Password can't be blank")
+            @Size(min = 8, message = "Password must be at least 8 charcters long")
+                String password) {}
 
     public record UsernameCheckResponse(boolean exists) {}
 
@@ -58,7 +70,7 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already used");
         User user = new User();
         user.setUsername(request.username());
-        user.setEmail(request.email());
+        user.setEmail(request.email().toLowerCase());
         user.setPassword_hash(password_encoder.encode(request.password()));
         try {
             user_repository.save(user);
