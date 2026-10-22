@@ -12,6 +12,10 @@ spring:
     show-sql: true
   flyway:
     enabled: true
+  spotify:
+    client-id: ${SPOTIFY_CLIENT_ID}
+    client-secret: ${SPOTIFY_CLIENT_SECRET}
+    redirect-uri: ${SPOTIFY_REDIRECT_URI}
 sentry:
   dsn: https://3b6562bde3a4795fc256383ac2ad26e3@o4510064302227456.ingest.us.sentry.io/4512106316169216
   send-default-pii: true
