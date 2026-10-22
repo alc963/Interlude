@@ -1,6 +1,8 @@
 # Interlude
 
-Personal listening habit tracker / music diary
+Interlude is a social music listening habit tracker.
+
+## Getting Started
 
 ### Local development
 
@@ -51,3 +53,36 @@ Access the Docker environment at:
 
 - Frontend: `http://localhost:8081/`
 - Backend: `http://localhost:8082/`
+
+## Testing
+
+> Requires `act` to be installed.
+
+```bash
+sh scripts/verify.sh
+```
+
+## Deployment
+
+This application is built with deployment to a single VPS in mind. If you have all the environment variables set, and all the secrets set *(in GitHub)*, then the deploy.yml workflow automatically deploys the application.
+Or if you use `.secrets` you can deploy manually using:
+```bash
+sh scripts/force-deploy.sh
+```
+
+## Built With
+- Java Spring Boot - Backend Framework
+- Postgres - Database Server
+- TypeScript React - Frontend Web Framework
+
+## Versioning
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/alc963/Interlude/tags).
+
+## Contributors
+<a href="https://github.com/alc963/Interlude/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=alc963/Interlude" />
+</a>
+
+## License
+
+This project is licensed under the GNU General Public License - see the [LICENSE.md](LICENSE.md) file for details
