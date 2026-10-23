@@ -1,4 +1,4 @@
-import TopTracksWidget from '../components/table/TopTracksWidget';
+import TopTracksWidget from '../components/table/TrackWidget';
 
 function Dashboard() {
     return (

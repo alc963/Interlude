@@ -3,6 +3,10 @@ import type { Artist, Track, Album } from '../util/music';
 
 const topEndpoint = '/me/top/';
 
+export async function get(endpoint: string) {
+    console.log(endpoint);
+}
+
 export async function getTopTracks(amount: number): Promise<Track[]> {
     const { data } = await axios.get<Track[]>(topEndpoint + 'tracks', {
         params: {
