@@ -16,18 +16,18 @@ function Playground() {
         ]}
       />
       <Table
-      columns={[
-        { key: 'songTitle', label: 'Title' },
-        { key: 'artist', label: 'Artist' },
-        { key: 'album', label: 'Album' },
-      ]}
-      rows={[
-        { songTitle: 'Midnight City', artist: 'M83', album: "Hurry Up, We're Dreaming" },
-        { songTitle: 'Electric Feel', artist: 'MGMT', album: 'Oracular Spectacular' },
-        { songTitle: 'Dreams', artist: 'Fleetwood Mac', album: 'Rumours' },
-        { songTitle: 'Clocks', artist: 'Coldplay', album: 'A Rush of Blood to the Head' },
-        { songTitle: 'Ocean Eyes', artist: 'Billie Eilish', album: 'Dont Smile at Me' },
-      ]}
+        columns={[
+          { key: 'songTitle', label: 'Title' },
+          { key: 'artist', label: 'Artist' },
+          { key: 'album', label: 'Album' },
+        ]}
+        rows={[
+          { songTitle: 'Midnight City', artist: 'M83', album: "Hurry Up, We're Dreaming" },
+          { songTitle: 'Electric Feel', artist: 'MGMT', album: 'Oracular Spectacular' },
+          { songTitle: 'Dreams', artist: 'Fleetwood Mac', album: 'Rumours' },
+          { songTitle: 'Clocks', artist: 'Coldplay', album: 'A Rush of Blood to the Head' },
+          { songTitle: 'Ocean Eyes', artist: 'Billie Eilish', album: 'Dont Smile at Me' },
+        ]}
       />
     </>
   );
