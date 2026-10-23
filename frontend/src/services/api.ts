@@ -1,9 +1,9 @@
 import axios from 'axios';
-import type { Artist, Track, Album } from '../util/types';
+import type { Artist, Track, Album } from '../util/music';
 
 const topEndpoint = '/me/top/';
 
-export async function getTopTracks(amount: Number): Promise<Track[]> {
+export async function getTopTracks(amount: number): Promise<Track[]> {
     const { data } = await axios.get<Track[]>(topEndpoint + 'tracks', {
         params: {
             amount: amount,
@@ -12,7 +12,7 @@ export async function getTopTracks(amount: Number): Promise<Track[]> {
     return data;
 }
 
-export async function getTopArtists(amount: Number): Promise<Artist[]> {
+export async function getTopArtists(amount: number): Promise<Artist[]> {
     const { data } = await axios.get<Artist[]>(topEndpoint + 'artists', {
         params: {
             amount: amount,
@@ -21,7 +21,7 @@ export async function getTopArtists(amount: Number): Promise<Artist[]> {
     return data;
 }
 
-export async function getTopAlbums(amount: Number): Promise<Album[]> {
+export async function getTopAlbums(amount: number): Promise<Album[]> {
     const { data } = await axios.get<Album[]>(topEndpoint + 'albums', {
         params: {
             amount: amount,

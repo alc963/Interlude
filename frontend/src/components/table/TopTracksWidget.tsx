@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { getTopTracks } from '../../services/api';
-import type { Track } from '../../util/types';
+import type { Track } from '../../util/music';
 import Table from './Table';
 
-type TopTracksWidgetProps = {
+type TracksWidgetProps = {
   trackAmount?: number;
 };
 
-type TopTrackRow = {
+type TrackRow = {
   title: string;
   artist: string;
   album: string;
@@ -21,8 +21,8 @@ const columns = [
 
 const MAX_ROWS = 10;
 
-function TopTracksWidget({ trackAmount = 5 }: TopTracksWidgetProps) {
-  const [rows, setRows] = useState<TopTrackRow[]>([]);
+function TracksWidget({ trackAmount = 5 }: TracksWidgetProps) {
+  const [rows, setRows] = useState<TrackRow[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -58,4 +58,4 @@ function TopTracksWidget({ trackAmount = 5 }: TopTracksWidgetProps) {
   );
 }
 
-export default TopTracksWidget;
+export default TracksWidget;
