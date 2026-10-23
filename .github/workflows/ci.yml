@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
       - run: |
           cd frontend
           npm ci
@@ -32,7 +32,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
       - run: |
           cd frontend
           npm ci
@@ -45,7 +45,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
       - run: |
           cd frontend
           npm ci
@@ -71,6 +71,7 @@ jobs:
       POSTGRES_DB: interlude
       POSTGRES_USER: interlude
       POSTGRES_PASSWORD: interlude
+      SECRET_KEY: cbef87d7c33a5d9f587cc5f79290e52b2c70fe84083f0329af8620816f6c9481
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
