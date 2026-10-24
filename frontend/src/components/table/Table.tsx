@@ -16,7 +16,6 @@ function Table<T extends Record<string, unknown>>({ columns, rows }: TableProps<
           width: '100%',
           borderCollapse: 'collapse',
           borderSpacing: 0,
-          // fontSize: '0.9rem',
         }}
       >
         <thead>

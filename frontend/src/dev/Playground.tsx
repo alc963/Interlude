@@ -1,5 +1,6 @@
 import MoodPieChart from "../components/piechart/MoodPieChart";
-import Table from "../components/table/Table";
+// import Table from "../components/table/Table";
+import TracksWidget from "../components/table/TracksWidget";
 
 function Playground() {
   return (
@@ -15,7 +16,7 @@ function Playground() {
           { name: 'Group F', value: 189 },
         ]}
       />
-      <Table
+      {/* <Table
         columns={[
           { key: 'songTitle', label: 'Title' },
           { key: 'artist', label: 'Artist' },
@@ -28,7 +29,8 @@ function Playground() {
           { songTitle: 'Clocks', artist: 'Coldplay', album: 'A Rush of Blood to the Head' },
           { songTitle: 'Ocean Eyes', artist: 'Billie Eilish', album: 'Dont Smile at Me' },
         ]}
-      />
+      /> */}
+      <TracksWidget trackAmount={4} />
     </>
   );
 }

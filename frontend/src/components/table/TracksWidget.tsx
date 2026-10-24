@@ -27,11 +27,12 @@ function TracksWidget({ trackAmount = 5 }: TracksWidgetProps) {
 
   useEffect(() => {
     let cancelled = false;
+    const num = MAX_ROWS < trackAmount ? MAX_ROWS : trackAmount;
 
-    getTopTracks(trackAmount).then((tracks: Track[]) => {
+    getTopTracks().then((tracks: Track[]) => {
       if (!cancelled) {
         setRows(
-          tracks.slice(0, MAX_ROWS).map((track) => ({
+          tracks.slice(0, num).map((track) => ({
             title: track.name,
             artist: track.artists.map((artist) => artist.name).join(', '),
             album: track.album,
@@ -52,7 +53,7 @@ function TracksWidget({ trackAmount = 5 }: TracksWidgetProps) {
 
   return (
     <section>
-      <h2>Top Tracks</h2>
+      <h2 className='mx-2 my-1'>Top Tracks</h2>
       {error ? <p role="alert">{error}</p> : <Table rows={rows} columns={columns} />}
     </section>
   );

@@ -1,17 +1,17 @@
 export type Artist = {
-    id: string;
+    id?: string;
     name: string;
 };
 
 export type Album = {
-    id: string;
+    id?: string;
     name: string;
     artists: Artist[];
     albumArtUrl?: string;
 };
 
 export type Track = {
-    id: string;
+    id?: string;
     name: string;
     artists: Artist[];
     album: string;
