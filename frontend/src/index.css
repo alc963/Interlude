@@ -1,1 +1,32 @@
 @import "tailwindcss";
+
+/* Spotify vibes but not the same green*/
+@theme {
+  --color-bg: #0b0b0d;
+  --color-surface: #16161a;
+  --color-line: #2c2c34;
+  --color-text: #f4f4f5;
+  --color-muted: #9a9aa6;
+  --color-accent: #b8f2c9;
+  --color-accent-hover: #d2f8de;
+  --color-on-accent: #0b0b0d;
+  --color-danger: #ff8a8a;
+}
+
+html { color-scheme: dark; }
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+  .input {
+    @apply w-full rounded-lg border border-line bg-surface px-3 py-2 text-text outline-none placeholder:text-muted focus:border-accent;
+  }
+  .btn-primary {
+    @apply inline-block rounded-full bg-accent px-6 py-2 text-center font-semibold text-on-accent transition-colors hover:bg-accent-hover disabled:opacity-50;
+  }
+}

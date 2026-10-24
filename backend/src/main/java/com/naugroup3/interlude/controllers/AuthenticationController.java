@@ -64,7 +64,7 @@ public class AuthenticationController {
 
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@Valid @RequestBody SignupRequest request) {
-        if(user_repository.existsByEmail(request.email()))
+        if(user_repository.existsByEmailIgnoreCase(request.email()))
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already used");
         if(username_service.exists(request.username()))
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already used");
