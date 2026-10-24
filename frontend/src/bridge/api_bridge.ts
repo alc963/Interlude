@@ -1,6 +1,7 @@
 import { local_storage_get, local_storage_remove, local_storage_set } from "./local_storage";
 import type { LoginRequest, LoginResponse, SignupRequest, SignupResponse, UsernameCheckResponse } from "./types/auth";
 import { jwt_expired } from "./validator";
+import type { CurrentlyPlayingResponse } from "./types/spotify";
 
 type ApiResponse<T> = Promise<T|Response>;
 
@@ -8,7 +9,7 @@ export const JWT_LOCAL_STORAGE_KEY: string = "JWT";
 const BASE_URL: string =
     window.location.hostname === "interlude.sumii.me"
         ? "https://iapi.sumii.me"
-        : "http://localhost:8082";
+        : "http://127.0.0.1:8082";
 
 export const ApiBridge = {
     jwt: null as string | null,
@@ -30,15 +31,16 @@ export const ApiBridge = {
         const query = new URLSearchParams(params).toString();
         const response = await fetch(`${BASE_URL}${path}${query ? `?${query}` : ""}`, {
             headers: ApiBridge.auth_headers(),
+            credentials: "include"
         });
-        if (!response.ok) return response;
+        if (!response.ok || response.status === 204) return response;
         return await response.json();
     },
 
     async post<Req, Res>(path: string, body: Req, only_text = false): ApiResponse<Res> {
         const response = await fetch(`${BASE_URL}${path}`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", ...ApiBridge.auth_headers() },
             body: JSON.stringify(body),
         });
         if (!response.ok) return response;
@@ -68,5 +70,13 @@ export const ApiBridge = {
 
     auth_headers(): Record<string, string> {
         return ApiBridge.jwt ? { Authorization: `Bearer ${ApiBridge.jwt}` } : {};
+    },
+
+    spotify_login() {
+        window.location.assign(`${BASE_URL}/auth/spotify/login`);
+    },
+
+    spotify_currently_playing() {
+        return ApiBridge.get<CurrentlyPlayingResponse>("/spotify/currently-playing");
     },
 };

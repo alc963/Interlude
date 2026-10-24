@@ -12,6 +12,10 @@ spring:
     show-sql: true
   flyway:
     enabled: true
+  spotify:
+    client-id: ${SPOTIFY_CLIENT_ID}
+    client-secret: ${SPOTIFY_CLIENT_SECRET}
+    redirect-uri: ${SPOTIFY_REDIRECT_URI}
 jwt:
   secret: ${SECRET_KEY}
 sentry:
