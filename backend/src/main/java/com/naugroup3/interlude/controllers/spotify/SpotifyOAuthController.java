@@ -17,7 +17,7 @@ import java.util.Base64;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
-@RequestMapping( "/api/auth/spotify" ) 
+@RequestMapping( "/auth/spotify" ) 
 public class SpotifyOAuthController {
 
     private final SpotifyOAuthService spotifyOAuthService;

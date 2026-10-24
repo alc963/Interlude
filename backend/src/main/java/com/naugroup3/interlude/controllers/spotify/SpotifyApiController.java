@@ -14,7 +14,7 @@ import com.naugroup3.interlude.services.Spotify.SpotifyApiClient;
 import jakarta.servlet.http.HttpSession;
 
 @RestController 
-@RequestMapping( "/api/spotify" )
+@RequestMapping( "/spotify" )
 public class SpotifyApiController {
 
     private final SpotifyApiClient spotifyApiClient;
