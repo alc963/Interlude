@@ -5,7 +5,7 @@ import { jwt_expired } from "./validator";
 type ApiResponse<T> = Promise<T|Response>;
 
 export const JWT_LOCAL_STORAGE_KEY: string = "JWT";
-const BASE_URL: string =
+export const BASE_URL: string =
     window.location.hostname === "interlude.sumii.me"
         ? "https://iapi.sumii.me"
         : "http://localhost:8082";
