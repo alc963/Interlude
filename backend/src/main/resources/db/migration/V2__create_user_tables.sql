@@ -1,0 +1,7 @@
+CREATE TABLE users (
+	id BIGSERIAL PRIMARY KEY,
+	username VARCHAR(200) NOT NULL UNIQUE,
+	email VARCHAR(200) NOT NULL UNIQUE,
+	password_hash VARCHAR(256) NOT NULL,
+	spotify_token VARCHAR(512)
+);
