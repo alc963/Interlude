@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.naugroup3.interlude.models.spotify.SpotifyTokenResponse;
+
 import java.security.SecureRandom;
 import java.util.Base64;
 
@@ -62,7 +64,9 @@ public class SpotifyOAuthController {
             throw new ResponseStatusException( HttpStatus.BAD_REQUEST, "Missing authorization code" );
         }
 
-        spotifyOAuthService.exchangeCodeForTokens( code );
+        // save tokens for use by api
+        SpotifyTokenResponse tokens = spotifyOAuthService.exchangeCodeForTokens( code );
+        session.setAttribute( "spotify_tokens", tokens );
 
         return "Spotify authorization succeeded.";
     }
