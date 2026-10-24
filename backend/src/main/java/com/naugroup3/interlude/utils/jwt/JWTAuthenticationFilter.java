@@ -19,10 +19,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 
 @Component
-@RequiredArgsConstructor
 public class JWTAuthenticationFilter extends OncePerRequestFilter {
     private final JWTUtils jwt_utils;
     private final UserDetailsService user_details_service;
