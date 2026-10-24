@@ -1,5 +1,4 @@
-// src/pages/Login.tsx
-import { useState, type FormEvent } from 'react'
+import { useState, type SubmitEvent  } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { ApiBridge } from '../bridge/api_bridge'
 
@@ -10,7 +9,7 @@ export default function Login() {
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
 
-  async function submit(e: FormEvent) {
+  async function submit(e: SubmitEvent) {
     e.preventDefault()
     setError(null)
     setBusy(true)

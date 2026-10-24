@@ -7,14 +7,14 @@ export default function Layout() {
         <NavLink to="/" className="text-lg font-bold tracking-tight text-accent">Interlude</NavLink>
         <div className="flex items-center gap-5">
           <NavLink
-            to="/login"
+            to="/Login"
             className={({ isActive }) =>
               `text-sm transition-colors ${isActive ? 'text-accent' : 'text-muted hover:text-text'}`
             }
           >
             Log in
           </NavLink>
-          <Link to="/signup" className="btn-primary !px-4 !py-1.5 text-sm">Sign up</Link>
+          <Link to="/Signup" className="btn-primary !px-4 !py-1.5 text-sm">Sign up</Link>
         </div>
       </nav>
 

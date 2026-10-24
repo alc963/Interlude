@@ -10,8 +10,8 @@ export const router = createBrowserRouter([
     Component: Layout,
     children: [
       { index: true, Component: Hero },
-      { path: '/login', Component: Login },
-      { path: '/signup', Component: Signup },
+      { path: '/Login', Component: Login },
+      { path: '/Signup', Component: Signup },
     ],
   },
 ])
