@@ -38,6 +38,4 @@ export async function getTopTracks(): Promise<Track[]> {
         { name: 'Paper Planes', artists: [{ name: 'M.I.A.' }], album: 'Kala' },
     ];
     return rows;
-
-    // ApiBridge.get(topEndpoint + 'tracks');
 }
