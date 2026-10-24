@@ -1,6 +1,7 @@
 import { local_storage_get, local_storage_remove, local_storage_set } from "./local_storage";
 import type { LoginRequest, LoginResponse, SignupRequest, SignupResponse, UsernameCheckResponse } from "./types/auth";
 import { jwt_expired } from "./validator";
+import type { CurrentlyPlayingResponse } from "./types/spotify";
 
 type ApiResponse<T> = Promise<T|Response>;
 
@@ -32,7 +33,7 @@ export const ApiBridge = {
             headers: ApiBridge.auth_headers(),
             credentials: "include"
         });
-        if (!response.ok) return response;
+        if (!response.ok || response.status === 204) return response;
         return await response.json();
     },
 
@@ -69,5 +70,13 @@ export const ApiBridge = {
 
     auth_headers(): Record<string, string> {
         return ApiBridge.jwt ? { Authorization: `Bearer ${ApiBridge.jwt}` } : {};
+    },
+
+    spotify_login() {
+        window.location.assign(`${BASE_URL}/auth/spotify/login`);
+    },
+
+    spotify_currently_playing() {
+        return ApiBridge.get<CurrentlyPlayingResponse>("/spotify/currently-playing");
     },
 };
