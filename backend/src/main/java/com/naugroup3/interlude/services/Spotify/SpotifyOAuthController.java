@@ -1,6 +1,7 @@
 package com.naugroup3.interlude.services.Spotify;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.naugroup3.interlude.models.spotify.CurrentlyPlayingResponse;
 import com.naugroup3.interlude.models.spotify.SpotifyTokenResponse;
 
 import java.security.SecureRandom;
@@ -20,9 +22,14 @@ import jakarta.servlet.http.HttpSession;
 public class SpotifyOAuthController {
 
     private final SpotifyOAuthService spotifyOAuthService;
+    private final SpotifyApiClient spotifyApiClient;
 
-    public SpotifyOAuthController( SpotifyOAuthService spotifyOAuthService ) {
+    public SpotifyOAuthController( 
+        SpotifyOAuthService spotifyOAuthService, 
+        SpotifyApiClient spotifyApiClient 
+    ) {
         this.spotifyOAuthService = spotifyOAuthService;
+        this.spotifyApiClient = spotifyApiClient;
     }
 
     @GetMapping( "/login" )
@@ -69,5 +76,22 @@ public class SpotifyOAuthController {
         session.setAttribute( "spotify_tokens", tokens );
 
         return "Spotify authorization succeeded.";
+    }
+
+    @GetMapping( "/currently-playing" )
+    public ResponseEntity<CurrentlyPlayingResponse> getCurrentlyPlaying( HttpSession session ) {
+        Object storedTokens = session.getAttribute( "spotify_tokens" );
+
+        if( !( storedTokens instanceof SpotifyTokenResponse tokens ) ) {
+            throw new ResponseStatusException( HttpStatus.UNAUTHORIZED, "Connect Spotify first" );
+        }
+
+        CurrentlyPlayingResponse playback = spotifyApiClient.getCurrentlyPlaying( tokens.accessToken() );
+
+        if( playback == null ) {
+            return ResponseEntity.noContent().build();
+        }
+
+        return ResponseEntity.ok( playback );
     }
 }
