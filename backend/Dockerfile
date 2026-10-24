@@ -5,7 +5,7 @@ COPY pom.xml .
 COPY src ./src
 RUN --mount=type=secret,id=sentry_token \
     SENTRY_AUTH_TOKEN="$(cat /run/secrets/sentry_token 2>/dev/null || true)" \
-    mvn clean package -DskipTests
+    mvn clean package -DskipTests -P
 RUN mvn dependency:copy -Dartifact=io.sentry:sentry-opentelemetry-agent:8.57.0 -DoutputDirectory=/app
 
 FROM eclipse-temurin:21-jre-alpine
