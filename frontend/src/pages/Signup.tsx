@@ -1,4 +1,3 @@
-// src/pages/Signup.tsx
 import { useState, type SubmitEvent  } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { ApiBridge } from '../bridge/api_bridge'
