@@ -26,7 +26,8 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource cors_configuration_source() {
         final CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("*")); // public API, so long as they have an account;
+        config.setAllowedOrigins(List.of("http://127.0.0.1:8081", "https://interlude.sumii.me"));
+        config.setAllowCredentials(true);
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
