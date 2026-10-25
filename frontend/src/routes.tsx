@@ -5,8 +5,8 @@ import Hero from './pages/Hero'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Dashboard from './pages/Dashboard'
-import Connect from './pages/Connect'
-
+// import Connect from './pages/Connect'
+import Layout from './layout'
 
 
 function GetHomePage() {
