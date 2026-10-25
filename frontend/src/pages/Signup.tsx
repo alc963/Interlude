@@ -23,7 +23,7 @@ export default function Signup() {
       if (res instanceof Response) {
         setError(res.status === 409 ? await res.text() : 'Something went wrong')
       } else {
-        navigate('/')
+        navigate('/connect')
       }
     } catch {
       setError("Can't reach the server")
