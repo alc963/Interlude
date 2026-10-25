@@ -1,10 +1,13 @@
 import { createBrowserRouter } from 'react-router'
-import Layout from './layout'
+import useAuthenticated from './hooks/useAuthenticated'
+/* pages and layout */
 import Hero from './pages/Hero'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Dashboard from './pages/Dashboard'
-import useAuthenticated from './hooks/useAuthenticated'
+import Connect from './pages/Connect'
+
+
 
 function GetHomePage() {
   const { authenticated } = useAuthenticated();
