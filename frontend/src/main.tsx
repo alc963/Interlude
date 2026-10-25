@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { ApiBridge } from './bridge/api_bridge'
-import AppRouter from './routes' 
+import { AppRouter } from './routes' 
 import './index.css'
 
 ApiBridge.initialize()
