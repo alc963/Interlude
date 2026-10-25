@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router'
+import { createBrowserRouter, RouterProvider } from 'react-router'
 import useAuthenticated from './hooks/useAuthenticated'
 /* pages and layout */
 import Layout from './layout'
