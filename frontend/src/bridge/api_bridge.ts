@@ -2,7 +2,7 @@ import { local_storage_get, local_storage_remove, local_storage_set } from "./lo
 import type { LoginRequest, LoginResponse, SignupRequest, SignupResponse, UsernameCheckResponse } from "./types/auth";
 import { jwt_expired } from "./validator";
 
-type ApiResponse<T> = Promise<T|Response>;
+type ApiResponse<T> = Promise<T | Response>;
 
 export const JWT_LOCAL_STORAGE_KEY: string = "JWT";
 export const BASE_URL: string =
@@ -42,7 +42,7 @@ export const ApiBridge = {
             body: JSON.stringify(body),
         });
         if (!response.ok) return response;
-        if(only_text) return await response.text() as Res;
+        if (only_text) return await response.text() as Res;
         return await response.json();
     },
 
@@ -51,7 +51,7 @@ export const ApiBridge = {
         if(typeof token !== "string") return token;
         local_storage_set(JWT_LOCAL_STORAGE_KEY, token);
         ApiBridge.jwt = token;
-        
+
         return { token };
     },
 
