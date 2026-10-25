@@ -3,10 +3,10 @@ import type { LoginRequest, LoginResponse, SignupRequest, SignupResponse, Userna
 import { jwt_expired } from "./validator";
 import type { CurrentlyPlayingResponse } from "./types/spotify";
 
-type ApiResponse<T> = Promise<T|Response>;
+type ApiResponse<T> = Promise<T | Response>;
 
 export const JWT_LOCAL_STORAGE_KEY: string = "JWT";
-const BASE_URL: string =
+export const BASE_URL: string =
     window.location.hostname === "interlude.sumii.me"
         ? "https://iapi.sumii.me"
         : "http://127.0.0.1:8082";
@@ -44,7 +44,7 @@ export const ApiBridge = {
             body: JSON.stringify(body),
         });
         if (!response.ok) return response;
-        if(only_text) return await response.text() as Res;
+        if (only_text) return await response.text() as Res;
         return await response.json();
     },
 
@@ -53,7 +53,7 @@ export const ApiBridge = {
         if(typeof token !== "string") return token;
         local_storage_set(JWT_LOCAL_STORAGE_KEY, token);
         ApiBridge.jwt = token;
-        
+
         return { token };
     },
 
