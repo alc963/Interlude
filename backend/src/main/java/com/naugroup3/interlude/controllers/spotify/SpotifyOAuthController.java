@@ -1,5 +1,6 @@
 package com.naugroup3.interlude.controllers.spotify;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,11 +22,14 @@ import jakarta.servlet.http.HttpSession;
 public class SpotifyOAuthController {
 
     private final SpotifyOAuthService spotifyOAuthService;
+    private final String frontendUrl;
 
     public SpotifyOAuthController( 
-        SpotifyOAuthService spotifyOAuthService
+        SpotifyOAuthService spotifyOAuthService,
+        @Value( "${spring.frontend-url}" ) String frontendUrl
     ) {
         this.spotifyOAuthService = spotifyOAuthService;
+        this.frontendUrl = frontendUrl;
     }
 
     @GetMapping( "/login" )
@@ -46,7 +50,7 @@ public class SpotifyOAuthController {
     }
 
     @GetMapping( "/callback" )
-    public String handleSpotifyCallback(
+    public RedirectView handleSpotifyCallback(
         @RequestParam( required = false ) String code,
         @RequestParam( required = false ) String state,
         @RequestParam( required = false ) String error,
@@ -60,7 +64,7 @@ public class SpotifyOAuthController {
         }
 
         if( error != null ) {
-            return "Spotify authorization was denied.";
+            return new RedirectView( frontendUrl + "?spotify=denied" );
         }
 
         if( code == null || code.isBlank() ) {
@@ -71,6 +75,6 @@ public class SpotifyOAuthController {
         SpotifyTokenResponse tokens = spotifyOAuthService.exchangeCodeForTokens( code );
         session.setAttribute( "spotify_tokens", tokens );
 
-        return "Spotify authorization succeeded.";
+        return new RedirectView( frontendUrl + "?spotify=connected" );
     }
 }
