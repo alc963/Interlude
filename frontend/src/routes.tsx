@@ -15,7 +15,7 @@ function GetHomePage() {
   return authenticated ? <Dashboard /> : <Hero />;
 }
 
-export const router = createBrowserRouter([
+const router = createBrowserRouter([
   {
     path: '/',
     Component: Layout,
@@ -27,3 +27,7 @@ export const router = createBrowserRouter([
     ],
   },
 ])
+
+export function AppRouter() {
+  return <RouterProvider router={routerConfig} />;
+}
