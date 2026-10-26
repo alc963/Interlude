@@ -12,17 +12,22 @@ spring:
     show-sql: true
   flyway:
     enabled: true
+  spotify:
+    client-id: ${SPOTIFY_CLIENT_ID}
+    client-secret: ${SPOTIFY_CLIENT_SECRET}
+    redirect-uri: ${SPOTIFY_REDIRECT_URI}
+  frontend-url: ${FRONTEND_URL:https://interlude.sumii.me}
 jwt:
   secret: ${SECRET_KEY}
 sentry:
   dsn: https://3b6562bde3a4795fc256383ac2ad26e3@o4510064302227456.ingest.us.sentry.io/4512106316169216
   send-default-pii: true
   logs:
-    enabled: true
+    enabled: false
   # Set traces-sample-rate to 1.0 to capture 100% of transactions for tracing.
-  traces-sample-rate: 1.0
+  traces-sample-rate: 0.01
   # Set profile-session-sample-rate to 1.0 to profile 100% of profile sessions.
-  profile-session-sample-rate: 1.0
+  profile-session-sample-rate: 0.01
   # Set profile-lifecycle to trace to automatically start and stop
   # profiling when a transaction starts and finishes.
   profile-lifecycle: TRACE

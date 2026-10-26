@@ -26,7 +26,8 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource cors_configuration_source() {
         final CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("*")); // public API, so long as they have an account;
+        config.setAllowedOrigins(List.of("http://127.0.0.1:8081", "https://interlude.sumii.me"));
+        config.setAllowCredentials(true);
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -38,7 +39,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain security_filter_chain(HttpSecurity http) throws Exception {
         http.cors(cors -> cors.configurationSource(cors_configuration_source()))
             .csrf(csrf -> csrf.disable()) // no cross site request forgery since stateless
-            .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/**", "/health").permitAll().anyRequest().authenticated())
+            .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/**", "/health", "/error").permitAll().anyRequest().authenticated())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authenticationProvider(authentication_provider)
             .addFilterBefore(jwt_auth_filter, UsernamePasswordAuthenticationFilter.class);

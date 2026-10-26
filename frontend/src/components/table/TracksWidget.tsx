@@ -22,11 +22,21 @@ const columns = [
 const MAX_ROWS = 10;
 
 async function getTopTracks(): Promise<Track[]> {
-  const tracks = await ApiBridge.get<Track[]>('/me/top/tracks');
-  if (tracks instanceof Response) {
-    throw new Error(`Failed to load top tracks (${tracks.status})`);
+  const track = await ApiBridge.spotify_currently_playing();
+  if (track instanceof Response) {
+    throw new Error(`Not listening to any track at the moment`);
   }
-  return tracks;
+  return [{
+    name: track.item?.name ?? "",
+    artists: track.item?.artists ?? [],
+    album: ""
+  }];
+  // TODO uncomment original functionality
+  // const tracks = await ApiBridge.get<Track[]>('/me/top/tracks');
+  // if (tracks instanceof Response) {
+  //   throw new Error(`Failed to load top tracks (${tracks.status})`);
+  // }
+  // return tracks;
 }
 
 function TracksWidget({ trackAmount = 5 }: TracksWidgetProps) {

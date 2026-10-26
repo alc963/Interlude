@@ -27,10 +27,11 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     private final HandlerExceptionResolver handler_exception_resolver;
 
     public JWTAuthenticationFilter(
+        JWTUtils jwt_utils,
         UserDetailsService user_details_service,
         @Qualifier("handlerExceptionResolver") HandlerExceptionResolver handler_exception_resolver
     ) {
-        this.jwt_utils = new JWTUtils();
+        this.jwt_utils = jwt_utils;
         this.user_details_service = user_details_service;
         this.handler_exception_resolver = handler_exception_resolver;
     }

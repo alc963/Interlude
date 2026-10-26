@@ -6,6 +6,7 @@ import Hero from './pages/Hero'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Dashboard from './pages/Dashboard'
+import Connect from './pages/Connect'
 // import Connect from './pages/Connect'
 
 
@@ -21,9 +22,10 @@ const router = createBrowserRouter([
     Component: Layout,
     children: [
       { index: true, Component: GetHomePage },
-      { path: '/Login', Component: Login },
-      { path: '/Signup', Component: Signup },
-      { path: '/Dashboard', Component: Dashboard }
+      { path: '/login', Component: Login },
+      { path: '/signup', Component: Signup },
+      { path: '/dashboard', Component: Dashboard },
+      { path: '/connect', Component: Connect }
     ],
   },
 ])
