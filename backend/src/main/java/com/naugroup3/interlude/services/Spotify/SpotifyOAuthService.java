@@ -1,6 +1,7 @@
 package com.naugroup3.interlude.services.Spotify;
 
 import org.springframework.web.client.RestClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -18,15 +19,23 @@ public class SpotifyOAuthService {
     private final String redirectUri;
     private final RestClient restClient;
 
+    @Autowired
     public SpotifyOAuthService(
         @Value( "${spring.spotify.client-id}" ) String clientId, 
         @Value( "${spring.spotify.client-secret}" ) String clientSecret,
         @Value( "${spring.spotify.redirect-uri}" ) String redirectUri ) {
+            this(clientId, clientSecret, redirectUri, RestClient.builder().build());
+    }
+
+    public SpotifyOAuthService(
+        String clientId,
+        String clientSecret,
+        String redirectUri,
+        RestClient restClient ) {
             this.clientId = clientId;
             this.clientSecret = clientSecret;
             this.redirectUri = redirectUri;
-
-            this.restClient = RestClient.builder().build();
+            this.restClient = restClient;
     }
 
     public String buildAuthorizationUrl( String state ) {

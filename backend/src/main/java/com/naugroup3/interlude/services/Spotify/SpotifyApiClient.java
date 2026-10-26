@@ -1,6 +1,7 @@
 package com.naugroup3.interlude.services.Spotify;
 
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.client.RestClient;
 
 import com.naugroup3.interlude.models.spotify.CurrentlyPlayingResponse;
@@ -10,8 +11,13 @@ public class SpotifyApiClient {
     
     private final RestClient restClient;
 
+    @Autowired
     public SpotifyApiClient() {
-        this.restClient = RestClient.builder().build();
+        this(RestClient.builder().build());
+    }
+
+    public SpotifyApiClient(RestClient restClient) {
+        this.restClient = restClient;
     }
 
     public CurrentlyPlayingResponse getCurrentlyPlaying( String accessToken ) {
