@@ -39,7 +39,7 @@ public class SecurityConfiguration {
     public SecurityFilterChain security_filter_chain(HttpSecurity http) throws Exception {
         http.cors(cors -> cors.configurationSource(cors_configuration_source()))
             .csrf(csrf -> csrf.disable()) // no cross site request forgery since stateless
-            .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/**", "/health").permitAll().anyRequest().authenticated())
+            .authorizeHttpRequests(auth -> auth.requestMatchers("/auth/**", "/health", "/error").permitAll().anyRequest().authenticated())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authenticationProvider(authentication_provider)
             .addFilterBefore(jwt_auth_filter, UsernamePasswordAuthenticationFilter.class);
