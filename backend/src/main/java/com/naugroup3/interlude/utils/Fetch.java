@@ -6,6 +6,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.URLEncoder;
+import java.nio.file.Path;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,6 +52,18 @@ public class Fetch {
             return null;
         }
     } 
+
+    public static HttpResponse<Path> download(String url, Path destination) {
+        final HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).GET().build();
+        try {
+            return client.send(request, HttpResponse.BodyHandlers.ofFile(destination));
+        } catch (IOException e) {
+            return null;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return null;
+        }
+    }
 
     public static HttpResponse<String> request(String base_url, Map<String, Object> params, HttpRequest.Builder request_builder) {
         final HttpRequest request = request_builder
