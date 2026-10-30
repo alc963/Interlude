@@ -18,8 +18,8 @@ public class JWTUtils {
     @Value("${jwt.secret}")
     private String SECRET_KEY;
     // TODO add TimeUtils
-    // 60 days ms
-    private final long EXPIRATION_TIME_MS = 1000L * 60L * 60L * 24L * 60L;
+    // 15 minutes in milliseconds
+    private final long EXPIRATION_TIME_MS = 1000L * 60L * 15L;
 
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));

@@ -26,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 
 @RestController
@@ -33,21 +34,21 @@ import org.springframework.dao.DataIntegrityViolationException;
 @RequiredArgsConstructor
 public class AuthenticationController {
     public record LoginRequest(
-        @NotBlank(message = "Email can't be blank") String email, 
-        @NotBlank @Size(min = 8, message = "Password must be at least 8 charcters long") String password) {}
-    
-    public record SignupRequest(
-        @NotBlank(message = "Username can't be blank") 
-            @Pattern(regexp = Validator.USERNAME_REGEX, message = "Username must be 3-16 characters: letters, numbers, _ or -")
-                String username,
-        @Email(message = "Invalid email format")
-            @NotBlank(message = "Email can't be blank")
-                String email,
-        @NotBlank(message = "Password can't be blank")
-            @Size(min = 8, message = "Password must be at least 8 charcters long")
-                String password) {}
+            @NotBlank(message = "Email can't be blank") String email,
+            @NotBlank @Size(min = 8, message = "Password must be at least 8 charcters long") String password) {
+    }
 
-    public record UsernameCheckResponse(boolean exists) {}
+    public record SignupRequest(
+            @NotBlank(message = "Username can't be blank") @Pattern(regexp = Validator.USERNAME_REGEX, message = "Username must be 3-16 characters: letters, numbers, _ or -") String username,
+            @Email(message = "Invalid email format") @NotBlank(message = "Email can't be blank") String email,
+            @NotBlank(message = "Password can't be blank") @Size(min = 8, message = "Password must be at least 8 charcters long") String password) {
+    }
+
+    public record TokenRefreshRequest(String refreshToken) {
+    }
+
+    public record UsernameCheckResponse(boolean exists) {
+    }
 
     private final UserRepository user_repository;
     private final UsernameService username_service;
@@ -57,16 +58,16 @@ public class AuthenticationController {
 
     @GetMapping("/username-check")
     public UsernameCheckResponse username_check(@RequestParam String username) {
-        if(!Validator.validate_username(username))
+        if (!Validator.validate_username(username))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid username");
         return new UsernameCheckResponse(username_service.exists(username));
     }
 
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@Valid @RequestBody SignupRequest request) {
-        if(user_repository.existsByEmailIgnoreCase(request.email()))
+        if (user_repository.existsByEmailIgnoreCase(request.email()))
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already used");
-        if(username_service.exists(request.username()))
+        if (username_service.exists(request.username()))
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already used");
         User user = new User();
         user.setUsername(request.username());
@@ -84,7 +85,8 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<String> authenticate(@RequestBody LoginRequest request) {
-        final UsernamePasswordAuthenticationToken auth_token = new UsernamePasswordAuthenticationToken(request.email(), request.password());
+        final UsernamePasswordAuthenticationToken auth_token = new UsernamePasswordAuthenticationToken(request.email(),
+                request.password());
         try {
             authentication_manager.authenticate(auth_token);
         } catch (AuthenticationException e) {
@@ -92,6 +94,15 @@ public class AuthenticationController {
         }
 
         final String token = jwt_utils.generate_token(request.email());
+        // final String refresh_token = refresh_token_service.createRefreshToken(request.email());
         return ResponseEntity.ok(token);
     }
+
+    @PostMapping("/refreshtoken")
+    public ResponseEntity<String> refresh_token(@RequestBody TokenRefreshRequest request) {
+        // TODO: process POST request
+
+        return ResponseEntity.ok("");
+    }
+
 }
