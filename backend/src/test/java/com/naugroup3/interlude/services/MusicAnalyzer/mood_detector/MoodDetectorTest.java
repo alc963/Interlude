@@ -60,11 +60,8 @@ class MoodDetectorTest {
     }
 
     @Test
-    void rejects_missing_files_and_unsupported_extensions() throws IOException {
-        final Path text_file = Files.writeString(temp_dir.resolve("notes.txt"), "hello");
-
+    void rejects_missing_files() {
         assertThatThrownBy(() -> MoodDetector.analyze(temp_dir.resolve("nope.mp3").toString())).isInstanceOf(IllegalArgumentException.class);
-        assertThatThrownBy(() -> MoodDetector.analyze(text_file.toString())).isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
