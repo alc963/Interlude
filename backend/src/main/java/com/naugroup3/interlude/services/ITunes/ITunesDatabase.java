@@ -8,26 +8,28 @@ import org.springframework.stereotype.Service;
 import com.naugroup3.interlude.models.itunes.ITunesArtist;
 import com.naugroup3.interlude.models.itunes.ITunesCollection;
 import com.naugroup3.interlude.models.itunes.ITunesTrack;
-import com.naugroup3.interlude.models.itunes.ITunesTrackProcessed;
 import com.naugroup3.interlude.models.itunes.ServiceIdToITunesTrack;
 import com.naugroup3.interlude.repositories.itunes.ITunesArtistRepository;
 import com.naugroup3.interlude.repositories.itunes.ITunesCollectionRepository;
-import com.naugroup3.interlude.repositories.itunes.ITunesTrackProcessedRepository;
 import com.naugroup3.interlude.repositories.itunes.ITunesTrackRepository;
+import com.naugroup3.interlude.repositories.itunes.ITunesTrackSampleMoodRepository;
 import com.naugroup3.interlude.repositories.itunes.ServiceIdToITunesTrackRepo;
 
 @Service
 public class ITunesDatabase {
     private ServiceIdToITunesTrackRepo service_id_to_itunes_track_repo;
-    private ITunesTrackProcessedRepository track_processed_repo;
+    private ITunesTrackSampleMoodRepository sample_mood_repo;
     private ITunesTrackRepository track_repo;
     private ITunesCollectionRepository collection_repo;
     private ITunesArtistRepository artist_repo;
 
-    public ITunesDatabase(ITunesTrackRepository track_repo, ITunesCollectionRepository collection_repo, ITunesArtistRepository artist_repo) {
+    public ITunesDatabase(ITunesTrackRepository track_repo, ITunesCollectionRepository collection_repo, ITunesArtistRepository artist_repo,
+            ServiceIdToITunesTrackRepo service_id_to_itunes_track_repo, ITunesTrackSampleMoodRepository sample_mood_repo) {
         this.track_repo = track_repo;
         this.collection_repo = collection_repo;
         this.artist_repo = artist_repo;
+        this.service_id_to_itunes_track_repo = service_id_to_itunes_track_repo;
+        this.sample_mood_repo = sample_mood_repo;
     }
 
     public void save_artist(ITunesArtist artist) {
@@ -44,9 +46,6 @@ public class ITunesDatabase {
     }
     public void save_service_id_track_id_mapping(String service_id, Long track_id) { 
         this.save_service_id_track_id_mapping(new ServiceIdToITunesTrack(service_id, track_id));
-    }
-    public void save_track_processed(ITunesTrackProcessed track_processed) { 
-        this.track_processed_repo.save(track_processed);
     }
 
     public List<ITunesArtist> get_artists(String name) {
@@ -74,6 +73,6 @@ public class ITunesDatabase {
     }
 
     public Boolean is_track_processed(Long track_id) {
-        return track_processed_repo.existsById(track_id);
+        return sample_mood_repo.existsById(track_id);
     }
 }
