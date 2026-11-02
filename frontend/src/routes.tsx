@@ -7,9 +7,7 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Dashboard from './pages/Dashboard'
 import Connect from './pages/Connect'
-// import Connect from './pages/Connect'
-
-
+import Friends from './pages/Friends'
 
 function GetHomePage() {
   const { authenticated } = useAuthenticated();
@@ -25,7 +23,8 @@ const router = createBrowserRouter([
       { path: '/login', Component: Login },
       { path: '/signup', Component: Signup },
       { path: '/dashboard', Component: Dashboard },
-      { path: '/connect', Component: Connect }
+      { path: '/connect', Component: Connect },
+      { path: '/friends', Component: Friends }
     ],
   },
 ])
