@@ -3,17 +3,19 @@ export interface SignupRequest {
     email: string;
     password: string;
 }
-export interface SignupResponse {
-    token: string;
+export interface AuthTokenResponse {
+    accessToken: string;
+    tokenType: string;
+    refreshToken: string;
 }
+
+export type SignupResponse = AuthTokenResponse;
 
 export interface LoginRequest {
     email: string;
     password: string;
 }
-export interface LoginResponse {
-    token: string;
-}
+export type LoginResponse = AuthTokenResponse;
 
 export interface UsernameCheckResponse {
     exists: boolean;

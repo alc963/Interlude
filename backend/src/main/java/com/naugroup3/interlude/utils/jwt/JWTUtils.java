@@ -17,9 +17,8 @@ import io.jsonwebtoken.security.Keys;
 public class JWTUtils {
     @Value("${jwt.secret}")
     private String SECRET_KEY;
-    // TODO add TimeUtils
-    // 15 minutes in milliseconds
-    private final long EXPIRATION_TIME_MS = 1000L * 60L * 15L;
+    @Value("${jwt.access-expiration-ms:900000}")
+    private long expiration_time_ms = 1000L * 60L * 15L;
 
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
@@ -27,19 +26,19 @@ public class JWTUtils {
 
     public String generate_token(String username) {
         return Jwts.builder()
-            .setSubject(username)
-            .setIssuedAt(new Date())
-            .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME_MS))
-            .signWith(getSigningKey(), SignatureAlgorithm.HS256)
-            .compact();
+                .setSubject(username)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expiration_time_ms))
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
     }
 
     private Claims get_token_body(String token) {
         return Jwts.parserBuilder()
-            .setSigningKey(getSigningKey())
-            .build()
-            .parseClaimsJws(token)
-            .getBody();
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     public String extract_email(String token) {

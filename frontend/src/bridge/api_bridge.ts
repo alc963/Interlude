@@ -1,11 +1,12 @@
 import { local_storage_get, local_storage_remove, local_storage_set } from "./local_storage";
-import type { LoginRequest, LoginResponse, SignupRequest, SignupResponse, UsernameCheckResponse } from "./types/auth";
+import type { AuthTokenResponse, LoginRequest, LoginResponse, SignupRequest, SignupResponse, UsernameCheckResponse } from "./types/auth";
 import { jwt_expired } from "./validator";
 import type { CurrentlyPlayingResponse } from "./types/spotify";
 
 type ApiResponse<T> = Promise<T | Response>;
 
 export const JWT_LOCAL_STORAGE_KEY: string = "JWT";
+export const REFRESH_TOKEN_LOCAL_STORAGE_KEY: string = "refreshToken";
 export const BASE_URL: string =
     window.location.hostname === "interlude.sumii.me"
         ? "https://iapi.sumii.me"
@@ -17,7 +18,7 @@ export const ApiBridge = {
     // returns true if JWT was loaded
     initialize() {
         const local_jwt = local_storage_get(JWT_LOCAL_STORAGE_KEY);
-        if(!jwt_expired(local_jwt)) {
+        if (!jwt_expired(local_jwt)) {
             ApiBridge.jwt = local_jwt;
             return true;
         }
@@ -48,13 +49,13 @@ export const ApiBridge = {
         return await response.json();
     },
 
-    async post_token<Req>(path: string, body: Req): Promise<{ token: string } | Response> {
-        const token = await ApiBridge.post<Req, string>(path, body, true);
-        if(typeof token !== "string") return token;
-        local_storage_set(JWT_LOCAL_STORAGE_KEY, token);
-        ApiBridge.jwt = token;
-
-        return { token };
+    async post_token<Req>(path: string, body: Req): Promise<AuthTokenResponse | Response> {
+        const tokens = await ApiBridge.post<Req, AuthTokenResponse>(path, body);
+        if (tokens instanceof Response) return tokens;
+        local_storage_set(JWT_LOCAL_STORAGE_KEY, tokens.accessToken);
+        local_storage_set(REFRESH_TOKEN_LOCAL_STORAGE_KEY, tokens.refreshToken);
+        ApiBridge.jwt = tokens.accessToken;
+        return tokens;
     },
 
     async signup(request: SignupRequest): ApiResponse<SignupResponse> {
