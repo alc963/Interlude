@@ -1,16 +1,30 @@
-import { Pie, PieChart } from 'recharts';
+import { Pie, PieChart, Tooltip, type TooltipIndex } from 'recharts';
 
-type MoodData = {
+type ChartData = {
   name: string;
   value: number;
 };
 
-type MoodPieChartProps = {
-  data: MoodData[];
+type MusicPieChartProps = {
+  data: ChartData[];
+  chartType: 'mood' | 'genre';
   isAnimationActive?: boolean;
+  defaultIndex?: TooltipIndex;
 };
 
-function MoodPieChart({ data, isAnimationActive = true }: MoodPieChartProps) {
+export default function MusicPieChart({
+  data,
+  chartType,
+  isAnimationActive = true,
+  defaultIndex
+}: MusicPieChartProps) {
+
+  if (chartType === 'mood') {
+    ;
+  } else { // genre
+    ;
+  }
+
   return (
     <PieChart style={{ width: '100%', maxWidth: '500px', maxHeight: '80vh', aspectRatio: 2 }} responsive>
       <Pie
@@ -22,11 +36,9 @@ function MoodPieChart({ data, isAnimationActive = true }: MoodPieChartProps) {
         cx="50%"
         cy="100%"
         outerRadius="120%"
-        label={({ name }) => name}
         isAnimationActive={isAnimationActive}
       />
+      <Tooltip defaultIndex={defaultIndex} />
     </PieChart>
   );
 }
-
-export default MoodPieChart;
