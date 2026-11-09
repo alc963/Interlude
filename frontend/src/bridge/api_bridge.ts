@@ -3,7 +3,7 @@ import type { LoginRequest, LoginResponse, SignupRequest, SignupResponse, Userna
 import { jwt_expired } from "./validator";
 import type { CurrentlyPlayingResponse } from "./types/spotify";
 import type { TopArtistSummaryResponse } from "./types/interlude";
-import { mockTopArtistSummary } from "./mock_data";
+// import { mockTopArtistSummary } from "./mock_data";
 
 type ApiResponse<T> = Promise<T | Response>;
 
@@ -83,6 +83,7 @@ export const ApiBridge = {
     },
 
     async top_artists_summary(): ApiResponse<TopArtistSummaryResponse> {
-        return mockTopArtistSummary;
+        return ApiBridge.get<TopArtistSummaryResponse>("/me/top/artists/summary");
+        // return mockTopArtistSummary;
     },
 };
