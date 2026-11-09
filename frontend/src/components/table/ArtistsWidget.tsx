@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ApiBridge } from '../../bridge/api_bridge';
-import type { Artist } from '../../util/music';
+import type { Artist } from '../../bridge/types/music';
 import Table from './Table';
 
 type ArtistsWidgetProps = {

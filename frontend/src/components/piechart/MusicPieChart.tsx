@@ -1,4 +1,5 @@
 import { Pie, PieChart, Tooltip, type TooltipIndex } from 'recharts';
+import { getGenreColor } from '../../bridge/types/music';
 
 type ChartData = {
   name: string;
@@ -19,11 +20,9 @@ export default function MusicPieChart({
   defaultIndex
 }: MusicPieChartProps) {
 
-  if (chartType === 'mood') {
-    ;
-  } else { // genre
-    ;
-  }
+  const coloredData = chartType === 'genre' ?
+    data.map((items) => ({ ...items, fill: getGenreColor(items.name) })) :
+    data.map((items) => ({ ...items, fill: '#FFFFFF' }));
 
   return (
     <PieChart style={{ width: '100%', maxWidth: '500px', maxHeight: '80vh', aspectRatio: 2 }} responsive>
@@ -32,7 +31,7 @@ export default function MusicPieChart({
         nameKey="name"
         startAngle={180}
         endAngle={0}
-        data={data}
+        data={coloredData}
         cx="50%"
         cy="100%"
         outerRadius="120%"
