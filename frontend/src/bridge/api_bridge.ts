@@ -2,6 +2,8 @@ import { local_storage_get, local_storage_remove, local_storage_set } from "./lo
 import type { LoginRequest, LoginResponse, SignupRequest, SignupResponse, UsernameCheckResponse } from "./types/auth";
 import { jwt_expired } from "./validator";
 import type { CurrentlyPlayingResponse } from "./types/spotify";
+import type { TopArtistSummaryResponse } from "./types/interlude";
+// import { mockTopArtistSummary } from "./mock_data";
 
 type ApiResponse<T> = Promise<T | Response>;
 
@@ -17,7 +19,7 @@ export const ApiBridge = {
     // returns true if JWT was loaded
     initialize() {
         const local_jwt = local_storage_get(JWT_LOCAL_STORAGE_KEY);
-        if(!jwt_expired(local_jwt)) {
+        if (!jwt_expired(local_jwt)) {
             ApiBridge.jwt = local_jwt;
             return true;
         }
@@ -50,7 +52,7 @@ export const ApiBridge = {
 
     async post_token<Req>(path: string, body: Req): Promise<{ token: string } | Response> {
         const token = await ApiBridge.post<Req, string>(path, body, true);
-        if(typeof token !== "string") return token;
+        if (typeof token !== "string") return token;
         local_storage_set(JWT_LOCAL_STORAGE_KEY, token);
         ApiBridge.jwt = token;
 
@@ -78,5 +80,10 @@ export const ApiBridge = {
 
     spotify_currently_playing() {
         return ApiBridge.get<CurrentlyPlayingResponse>("/spotify/currently-playing");
+    },
+
+    async top_artists_summary(): ApiResponse<TopArtistSummaryResponse> {
+        return ApiBridge.get<TopArtistSummaryResponse>("/me/top/artists/summary");
+        // return mockTopArtistSummary;
     },
 };
