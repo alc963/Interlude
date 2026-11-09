@@ -1,3 +1,5 @@
+import type { CSSProperties, ReactNode } from 'react';
+
 type TableColumn = {
   key: string;
   label: string;
@@ -6,9 +8,14 @@ type TableColumn = {
 type TableProps<T extends Record<string, unknown>> = {
   columns: TableColumn[];
   rows: T[];
+  verticalAlign?: CSSProperties['verticalAlign'];
 };
 
-function Table<T extends Record<string, unknown>>({ columns, rows }: TableProps<T>) {
+function Table<T extends Record<string, unknown>>({
+  columns,
+  rows,
+  verticalAlign = 'top',
+}: TableProps<T>) {
   return (
     <div style={{ width: '100%', overflowX: 'auto' }}>
       <table
@@ -47,10 +54,10 @@ function Table<T extends Record<string, unknown>>({ columns, rows }: TableProps<
                     style={{
                       padding: '0.75rem 1rem',
                       borderBottom: '1px solid gray',
-                      verticalAlign: 'top',
+                      verticalAlign,
                     }}
                   >
-                    {String(value)}
+                    {value as ReactNode}
                   </td>
                 );
               })}

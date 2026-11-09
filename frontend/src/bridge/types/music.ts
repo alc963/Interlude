@@ -9,6 +9,7 @@ export type Album = {
     name: string;
     artists: Artist[];
     albumArtUrl?: string;
+    playCount?: number;
 };
 
 export type Track = {

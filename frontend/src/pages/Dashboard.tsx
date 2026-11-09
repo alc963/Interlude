@@ -1,4 +1,4 @@
-import TopTracksWidget from '../components/table/TracksWidget';
+// import TopTracksWidget from '../components/table/TracksWidget';
 import MusicPieChart from '../components/piechart/MusicPieChart';
 import TopArtistsInteractive from '../components/TopArtistsInteractive';
 import useTopArtistsSummary from '../hooks/useTopArtistsSummary';
@@ -23,7 +23,7 @@ function Dashboard() {
           loading ? (<p>Loading top artists...</p>)
             : error ? (<p role="alert">{error}</p>)
               : null}
-        <TopTracksWidget />
+        {/* <TopTracksWidget /> */}
         <MusicPieChart data={data} chartType='genre' />
       </div>
     </main>
