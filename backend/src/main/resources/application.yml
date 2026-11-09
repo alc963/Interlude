@@ -19,6 +19,8 @@ spring:
   frontend-url: ${FRONTEND_URL:https://interlude.sumii.me}
 jwt:
   secret: ${SECRET_KEY}
+  access-expiration-ms: ${JWT_ACCESS_EXPIRATION_MS:900000}
+  refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:86400000}
 sentry:
   dsn: https://3b6562bde3a4795fc256383ac2ad26e3@o4510064302227456.ingest.us.sentry.io/4512106316169216
   send-default-pii: true
