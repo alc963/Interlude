@@ -1,0 +1,11 @@
+CREATE TABLE spotify_session (
+	user_id BIGINT PRIMARY KEY,
+	access_token VARCHAR(1024) NOT NULL,
+	refresh_token VARCHAR(1024) NOT NULL,
+	scope VARCHAR(500),
+	expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
+	created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+	modified_at TIMESTAMP WITH TIME ZONE NOT NULL,
+	CONSTRAINT fk_spotify_session_user
+		FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
