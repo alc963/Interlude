@@ -29,7 +29,7 @@ async function getTopTracks(): Promise<Track[]> {
   return [{
     name: track.item?.name ?? "",
     artists: track.item?.artists ?? [],
-    album: ""
+    album: track.item?.album.name ?? ""
   }];
   // TODO uncomment original functionality
   // const tracks = await ApiBridge.get<Track[]>('/me/top/tracks');
