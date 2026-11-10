@@ -1,6 +1,5 @@
 package com.naugroup3.interlude.models.spotify;
 
-import java.time.Duration;
 import java.time.Instant;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -40,21 +39,18 @@ public class SpotifySession {
     @Column(nullable = false)
     private Instant modified_at;
 
-    public SpotifySession(Long user_id, SpotifyTokenResponse tokens, Instant now) {
+    public SpotifySession(Long user_id, SpotifyTokenResponse tokens) {
         this.user_id = user_id;
-        apply_tokens(tokens, now);
+        apply_tokens(tokens);
     }
 
-    public void apply_tokens(SpotifyTokenResponse tokens, Instant now) {
+    // keep old tokens if no new tokens
+    public void apply_tokens(SpotifyTokenResponse tokens) {
         this.access_token = tokens.accessToken();
-        if (tokens.refreshToken() != null)
+        if(tokens.refreshToken() != null)
             this.refresh_token = tokens.refreshToken();
-        if (tokens.scope() != null)
+        if(tokens.scope() != null)
             this.scope = tokens.scope();
-        this.expires_at = now.plusSeconds(tokens.expiresIn());
-    }
-
-    public boolean expires_within(Duration margin, Instant now) {
-        return !now.plus(margin).isBefore(expires_at);
+        this.expires_at = Instant.now().plusSeconds(tokens.expiresIn());
     }
 }
