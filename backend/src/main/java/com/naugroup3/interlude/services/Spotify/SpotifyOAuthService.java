@@ -60,7 +60,17 @@ public class SpotifyOAuthService {
         form.add( "grant_type", "authorization_code" );
         form.add( "code", code );
         form.add( "redirect_uri", redirectUri );
-        
+        return requestTokens(form);
+    }
+
+    public SpotifyTokenResponse refreshAccessToken( String refreshToken ) {
+        MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+        form.add("grant_type", "refresh_token");
+        form.add("refresh_token", refreshToken);
+        return requestTokens(form);
+    }
+
+    private SpotifyTokenResponse requestTokens(MultiValueMap<String, String> form) {
         return restClient.post()
             .uri( "https://accounts.spotify.com/api/token" )
             .contentType( MediaType.APPLICATION_FORM_URLENCODED )
