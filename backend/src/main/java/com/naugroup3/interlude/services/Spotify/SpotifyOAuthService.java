@@ -13,7 +13,6 @@ import com.naugroup3.interlude.models.spotify.SpotifyTokenResponse;
 
 @Service
 public class SpotifyOAuthService {
-
     private final String clientId;
     private final String clientSecret;
     private final String redirectUri;
@@ -21,9 +20,9 @@ public class SpotifyOAuthService {
 
     @Autowired
     public SpotifyOAuthService(
-        @Value( "${spring.spotify.client-id}" ) String clientId, 
-        @Value( "${spring.spotify.client-secret}" ) String clientSecret,
-        @Value( "${spring.spotify.redirect-uri}" ) String redirectUri ) {
+        @Value("${spring.spotify.client-id}") String clientId, 
+        @Value("${spring.spotify.client-secret}") String clientSecret,
+        @Value("${spring.spotify.redirect-uri}") String redirectUri) {
             this(clientId, clientSecret, redirectUri, RestClient.builder().build());
     }
 
@@ -31,39 +30,39 @@ public class SpotifyOAuthService {
         String clientId,
         String clientSecret,
         String redirectUri,
-        RestClient restClient ) {
+        RestClient restClient) {
             this.clientId = clientId;
             this.clientSecret = clientSecret;
             this.redirectUri = redirectUri;
             this.restClient = restClient;
     }
 
-    public String buildAuthorizationUrl( String state ) {
+    public String buildAuthorizationUrl(String state) {
         String scopes = "user-read-currently-playing user-read-recently-played";
         // potentially later include: 
         // user-top-read, user-read-playback-state, user-read-playback-position
 
         return UriComponentsBuilder
-            .fromUriString( "https://accounts.spotify.com/authorize?" )
-            .queryParam( "response_type", "code" )
-            .queryParam( "client_id", clientId )
-            .queryParam( "scope", scopes )
-            .queryParam( "redirect_uri", redirectUri )
-            .queryParam( "state", state )
+            .fromUriString("https://accounts.spotify.com/authorize?")
+            .queryParam("response_type", "code")
+            .queryParam("client_id", clientId)
+            .queryParam("scope", scopes)
+            .queryParam("redirect_uri", redirectUri)
+            .queryParam("state", state)
             .encode()
             .build()
             .toUriString();
     }
 
-    public SpotifyTokenResponse exchangeCodeForTokens( String code ) {
+    public SpotifyTokenResponse exchangeCodeForTokens(String code) {
         MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
-        form.add( "grant_type", "authorization_code" );
-        form.add( "code", code );
-        form.add( "redirect_uri", redirectUri );
+        form.add("grant_type", "authorization_code");
+        form.add("code", code);
+        form.add("redirect_uri", redirectUri);
         return requestTokens(form);
     }
 
-    public SpotifyTokenResponse refreshAccessToken( String refreshToken ) {
+    public SpotifyTokenResponse refreshAccessToken(String refreshToken) {
         MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
         form.add("grant_type", "refresh_token");
         form.add("refresh_token", refreshToken);
@@ -72,11 +71,11 @@ public class SpotifyOAuthService {
 
     private SpotifyTokenResponse requestTokens(MultiValueMap<String, String> form) {
         return restClient.post()
-            .uri( "https://accounts.spotify.com/api/token" )
-            .contentType( MediaType.APPLICATION_FORM_URLENCODED )
-            .headers( headers -> headers.setBasicAuth( clientId, clientSecret ) )
-            .body( form )
+            .uri("https://accounts.spotify.com/api/token")
+            .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .headers(headers -> headers.setBasicAuth(clientId, clientSecret))
+            .body(form)
             .retrieve()
-            .body( SpotifyTokenResponse.class );
+            .body(SpotifyTokenResponse.class);
     }
 }
