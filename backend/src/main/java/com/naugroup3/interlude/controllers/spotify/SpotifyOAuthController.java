@@ -10,7 +10,9 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.naugroup3.interlude.models.spotify.SpotifyTokenResponse;
+import com.naugroup3.interlude.services.CurrentUserService;
 import com.naugroup3.interlude.services.Spotify.SpotifyOAuthService;
+import com.naugroup3.interlude.services.Spotify.SpotifySessionService;
 
 import java.security.SecureRandom;
 import java.util.Base64;
@@ -18,63 +20,74 @@ import java.util.Base64;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
-@RequestMapping( "/auth/spotify" ) 
+@RequestMapping("/auth/spotify") 
 public class SpotifyOAuthController {
 
     private final SpotifyOAuthService spotifyOAuthService;
+    private final SpotifySessionService spotifySessionService;
+    private final CurrentUserService currentUserService;
     private final String frontendUrl;
 
     public SpotifyOAuthController( 
         SpotifyOAuthService spotifyOAuthService,
-        @Value( "${spring.frontend-url}" ) String frontendUrl
+        SpotifySessionService spotifySessionService,
+        CurrentUserService currentUserService,
+        @Value("${spring.frontend-url}") String frontendUrl
     ) {
         this.spotifyOAuthService = spotifyOAuthService;
+        this.spotifySessionService = spotifySessionService;
+        this.currentUserService = currentUserService;
         this.frontendUrl = frontendUrl;
     }
 
-    @GetMapping( "/login" )
-    public RedirectView startSpotifyLogin( HttpSession session ) {
+    @GetMapping("/login")
+    public RedirectView startSpotifyLogin(@RequestParam(required = false) String token, HttpSession session) {
+        Long userId = currentUserService.require_user_id(token);
         
-        byte[] stateBytes = new byte[ 32 ];
-        new SecureRandom().nextBytes( stateBytes );
+        byte[] stateBytes = new byte[32];
+        new SecureRandom().nextBytes(stateBytes);
         
         String state = Base64.getUrlEncoder()
             .withoutPadding()
-            .encodeToString( stateBytes );
+            .encodeToString(stateBytes);
 
-        session.setAttribute( "spotify_oauth_state", state );
+        session.setAttribute("spotify_oauth_state", state);
+        session.setAttribute("spotify_oauth_user_id", userId);
 
-        String authorizationUrl = spotifyOAuthService.buildAuthorizationUrl( state );
+        String authorizationUrl = spotifyOAuthService.buildAuthorizationUrl(state);
         
-        return new RedirectView( authorizationUrl );
+        return new RedirectView(authorizationUrl);
     }
 
-    @GetMapping( "/callback" )
+    @GetMapping("/callback")
     public RedirectView handleSpotifyCallback(
-        @RequestParam( required = false ) String code,
-        @RequestParam( required = false ) String state,
-        @RequestParam( required = false ) String error,
+        @RequestParam(required = false) String code,
+        @RequestParam(required = false) String state,
+        @RequestParam(required = false) String error,
         HttpSession session 
     ) {
-        Object savedState = session.getAttribute( "spotify_oauth_state" );
-        session.removeAttribute( "spotify_oauth_state" );
+        Object savedState = session.getAttribute("spotify_oauth_state");
+        Object savedUserId = session.getAttribute("spotify_oauth_user_id");
+        session.removeAttribute("spotify_oauth_state");
+        session.removeAttribute("spotify_oauth_user_id");
 
-        if( !( savedState instanceof String expectedState ) || !expectedState.equals( state ) ) {
-            throw new ResponseStatusException( HttpStatus.BAD_REQUEST, "Invalid OAuth state" );
+        if(!(savedState instanceof String expectedState) || !expectedState.equals(state)
+            || !(savedUserId instanceof Long userId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid OAuth state");
         }
 
-        if( error != null ) {
-            return new RedirectView( frontendUrl + "?spotify=denied" );
+        if(error != null) {
+            return new RedirectView(frontendUrl + "?spotify=denied");
         }
 
-        if( code == null || code.isBlank() ) {
-            throw new ResponseStatusException( HttpStatus.BAD_REQUEST, "Missing authorization code" );
+        if(code == null || code.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Missing authorization code");
         }
 
         // save tokens for use by api
-        SpotifyTokenResponse tokens = spotifyOAuthService.exchangeCodeForTokens( code );
-        session.setAttribute( "spotify_tokens", tokens );
+        SpotifyTokenResponse tokens = spotifyOAuthService.exchangeCodeForTokens(code);
+        spotifySessionService.saveTokens(userId, tokens);
 
-        return new RedirectView( frontendUrl + "?spotify=connected" );
+        return new RedirectView(frontendUrl + "?spotify=connected");
     }
 }
