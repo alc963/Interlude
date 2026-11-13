@@ -1,30 +1,29 @@
 package com.naugroup3.interlude.services.ITunes;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 
 import com.naugroup3.interlude.models.itunes.ITunesCollection;
 import com.naugroup3.interlude.models.itunes.ITunesArtist;
 import com.naugroup3.interlude.models.itunes.ITunesTrack;
 import com.naugroup3.interlude.models.itunes.ServiceIdToITunesTrack;
+import com.naugroup3.interlude.services.MusicAnalyzer.MusicAnalyzer;
 
 public class ITunes {
     public static record GenericTrack(String service_uri, String title, String artist, String album, Long duration_milliseconds, Boolean explicit){}
     private final ITunesDatabase database;
     private final ITunesProxy proxy;
+    private final MusicAnalyzer analyzer;
 
-    private List<Consumer<ITunesTrack>> on_found_track_callbacks = new ArrayList<>();
-
-    public ITunes(ITunesDatabase database) {
+    public ITunes(ITunesDatabase database, MusicAnalyzer analyzer) {
         this.database = database;
         this.proxy = new ITunesProxy(database);
+        this.analyzer = analyzer;
     }
 
-    public void add_on_found_track_callback(Consumer<ITunesTrack> callback){
-        this.on_found_track_callbacks.add(callback);
+    public void enqueue_all_unprocessed_tracks() {
+        this.database.unprocessed_track().forEach(analyzer::enqueue);
     }
 
     public void process_track(GenericTrack track){
@@ -37,9 +36,7 @@ public class ITunes {
 
             database.save_service_id_track_id_mapping(track.service_uri(), found.getId());
             if(database.is_track_processed(found.getId())) return;
-            for(Consumer<ITunesTrack> on_found_track_callback : on_found_track_callbacks) {
-                on_found_track_callback.accept(found);
-            }
+            analyzer.enqueue(found);
         });
     }
 

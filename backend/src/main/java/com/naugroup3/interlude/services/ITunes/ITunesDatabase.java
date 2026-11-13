@@ -76,7 +76,7 @@ public class ITunesDatabase {
         return sample_mood_repo.existsById(track_id);
     }
 
-    public List<Long> unprocessed_track_ids() {
-        return track_repo.find_unprocessed_tracks().stream().map(t -> t.getId()).toList();
+    public List<ITunesTrack> unprocessed_track() {
+        return track_repo.find_unprocessed_tracks();
     }
 }
