@@ -1,9 +1,17 @@
 import { local_storage_get, local_storage_remove, local_storage_set } from "./local_storage";
 import type { LoginRequest, LoginResponse, SignupRequest, SignupResponse, UsernameCheckResponse } from "./types/auth";
 import { jwt_expired } from "./validator";
-import type { CurrentlyPlayingResponse } from "./types/spotify";
+import type { CurrentlyPlayingResponse, RecentlyPlayedRequest, RecentlyPlayedResponse } from "./types/spotify";
 
 type ApiResponse<T> = Promise<T | Response>;
+
+function clean_request(request: Record<string, unknown>): Record<string, string> {
+    return Object.fromEntries(
+        Object.entries(request)
+            .filter(([, value]) => value !== undefined)
+            .map(([key, value]) => [key, String(value)])
+    );
+}
 
 export const JWT_LOCAL_STORAGE_KEY: string = "JWT";
 export const BASE_URL: string =
@@ -72,11 +80,20 @@ export const ApiBridge = {
         return ApiBridge.jwt ? { Authorization: `Bearer ${ApiBridge.jwt}` } : {};
     },
 
+    spotify_login_url() {
+        const query = new URLSearchParams({ token: ApiBridge.jwt ?? "" }).toString();
+        return `${BASE_URL}/auth/spotify/login?${query}`;
+    },
+
     spotify_login() {
-        window.location.assign(`${BASE_URL}/auth/spotify/login`);
+        window.location.assign(ApiBridge.spotify_login_url());
     },
 
     spotify_currently_playing() {
         return ApiBridge.get<CurrentlyPlayingResponse>("/spotify/currently-playing");
+    },
+
+    spotify_recently_played(request: RecentlyPlayedRequest = {}) {
+        return ApiBridge.get<RecentlyPlayedResponse>("/spotify/recently-played", clean_request(request));
     },
 };
