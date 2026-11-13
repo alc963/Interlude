@@ -76,4 +76,8 @@ public class ITunesDatabase {
     public Boolean is_track_processed(Long track_id) {
         return track_processed_repo.existsById(track_id);
     }
+
+    public List<Long> unprocessed_tracks() {
+        return track_repo.findUnprocessedIds();
+    }
 }
