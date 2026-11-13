@@ -4,12 +4,18 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Service;
+
 import com.naugroup3.interlude.models.itunes.ITunesCollection;
 import com.naugroup3.interlude.models.itunes.ITunesArtist;
 import com.naugroup3.interlude.models.itunes.ITunesTrack;
 import com.naugroup3.interlude.models.itunes.ServiceIdToITunesTrack;
+import com.naugroup3.interlude.models.spotify.SpotifyTrack;
+import com.naugroup3.interlude.models.spotify.SpotifyTracksFetchedEvent;
 import com.naugroup3.interlude.services.MusicAnalyzer.MusicAnalyzer;
 
+@Service
 public class ITunes {
     public static record GenericTrack(String service_uri, String title, String artist, String album, Long duration_milliseconds, Boolean explicit){}
     private final ITunesDatabase database;
@@ -24,6 +30,18 @@ public class ITunes {
 
     public void enqueue_all_unprocessed_tracks() {
         this.database.unprocessed_track().forEach(analyzer::enqueue);
+    }
+
+    @EventListener
+    public void on_spotify_tracks_fetched(SpotifyTracksFetchedEvent event) {
+        event.tracks().forEach(track -> process_track(to_generic_track(track)));
+    }
+
+    private static GenericTrack to_generic_track(SpotifyTrack track) {
+        final String artist = track.artists() == null || track.artists().isEmpty() ? null : track.artists().get(0).name();
+        final String album = track.album() == null ? null : track.album().name();
+        final Long duration = track.durationMs() == null ? null : track.durationMs().longValue();
+        return new GenericTrack(track.uri(), track.name(), artist, album, duration, track.explicit());
     }
 
     public void process_track(GenericTrack track){
