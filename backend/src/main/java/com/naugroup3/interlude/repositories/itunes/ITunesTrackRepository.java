@@ -11,7 +11,7 @@ import com.naugroup3.interlude.models.itunes.ITunesTrack;
 public interface ITunesTrackRepository extends JpaRepository<ITunesTrack, Long> {
     List<ITunesTrack> findByCollection_id(Long collection_id);
     Optional<ITunesTrack> findByCollection_idAndName(Long collection_id, String name);
-    
-    @Query("SELECT t.id FROM ITunesTrack t WHERE NOT EXISTS (SELECT 1 FROM ITunesTrackProcessed p WHERE p.id = t.id)")
-    List<Long> findUnprocessedIds();
+
+    @Query("SELECT t FROM ITunesTrack t WHERE t.preview_url IS NOT NULL AND NOT EXISTS (SELECT 1 FROM ITunesTrackSampleMood m WHERE m.id = t.id)")
+    List<ITunesTrack> find_unprocessed_tracks();
 }
