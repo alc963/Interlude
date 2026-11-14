@@ -11,6 +11,12 @@ export default function Signup() {
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
 
+  function validInput()
+  {
+    const problem = validate_username(username) ?? validate_email(email) ?? validate_password(password)
+    return setError(problem)
+  }
+
   async function submit(e: SubmitEvent) {
     e.preventDefault()
     const problem = validate_username(username) ?? validate_email(email) ?? validate_password(password)
@@ -37,11 +43,11 @@ export default function Signup() {
       <form onSubmit={submit} noValidate className="w-full max-w-sm space-y-4">
         <h1 className="text-2xl font-bold">Sign up</h1>
         <input className="input" placeholder="Username" autoComplete="username"
-          value={username} onChange={(e) => setUsername(e.target.value)} />
+          value={username} onChange={(e) => {setUsername(e.target.value); validInput()}} />
         <input className="input" type="email" placeholder="Email" autoComplete="email"
-          value={email} onChange={(e) => setEmail(e.target.value)} />
+          value={email} onChange={(e) => {setEmail(e.target.value); validInput()}} />
         <input className="input" type="password" placeholder="Password (8+ characters)" autoComplete="new-password"
-          value={password} onChange={(e) => setPassword(e.target.value)} />
+          value={password} onChange={(e) => {setPassword(e.target.value); validInput()}} />
         {error && <p role="alert" className="text-sm text-danger">{error}</p>}
         <button className="btn-primary w-full" disabled={busy}>{busy ? 'Creating account…' : 'Create account'}</button>
         <p className="text-center text-sm text-muted">
