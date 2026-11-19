@@ -2,6 +2,8 @@ import { local_storage_get, local_storage_remove, local_storage_set } from "./lo
 import type { AuthTokenResponse, LoginRequest, LoginResponse, SignupRequest, SignupResponse, UsernameCheckResponse } from "./types/auth";
 import { jwt_expired } from "./validator";
 import type { CurrentlyPlayingResponse } from "./types/spotify";
+import type { TopArtistSummaryResponse } from "./types/interlude";
+// import { mockTopArtistSummary } from "./mock_data";
 
 type ApiResponse<T> = Promise<T | Response>;
 
@@ -158,5 +160,10 @@ export const ApiBridge = {
 
     spotify_currently_playing() {
         return ApiBridge.get<CurrentlyPlayingResponse>("/spotify/currently-playing");
+    },
+
+    async top_artists_summary(): ApiResponse<TopArtistSummaryResponse> {
+        return ApiBridge.get<TopArtistSummaryResponse>("/me/top/artists/summary");
+        // return mockTopArtistSummary;
     },
 };
