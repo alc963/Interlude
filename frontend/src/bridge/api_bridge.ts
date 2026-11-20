@@ -2,7 +2,7 @@ import { local_storage_get, local_storage_remove, local_storage_set } from "./lo
 import type { AuthTokenResponse, LoginRequest, LoginResponse, SignupRequest, SignupResponse, UsernameCheckResponse } from "./types/auth";
 import { jwt_expired } from "./validator";
 import type { CurrentlyPlayingResponse, RecentlyPlayedRequest, RecentlyPlayedResponse } from "./types/spotify";
-import type { TopArtistSummaryResponse } from "./types/interlude";
+import type { RecommendationsRequest, RecommendationsResponse, TopArtistSummaryResponse } from "./types/interlude";
 // import { mockTopArtistSummary } from "./mock_data";
 
 type ApiResponse<T> = Promise<T | Response>;
@@ -182,5 +182,9 @@ export const ApiBridge = {
     async top_artists_summary(): ApiResponse<TopArtistSummaryResponse> {
         return ApiBridge.get<TopArtistSummaryResponse>("/me/top/artists/summary");
         // return mockTopArtistSummary;
+    },
+
+    recommendations(request: RecommendationsRequest = {}) {
+        return ApiBridge.get<RecommendationsResponse>("/recommendations", clean_request(request));
     },
 };
