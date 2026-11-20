@@ -1,5 +1,7 @@
 package com.naugroup3.interlude.services.MusicAnalyzer.vibesnet;
 
+import com.naugroup3.interlude.services.MusicAnalyzer.AudioDecoder;
+
 import ai.onnxruntime.OnnxTensor;
 import ai.onnxruntime.OrtEnvironment;
 import ai.onnxruntime.OrtException;
@@ -24,7 +26,7 @@ public final class Vibesnet {
     private Vibesnet() {}
 
     public static MusicAnalytics analyze(String file_path) {
-        float[] waveform = AudioDecoder.decode(file_path);
+        float[] waveform = AudioDecoder.decode(file_path, MelSpectrogram.SAMPLE_RATE);
         float[][] mel = MelSpectrogram.extract(waveform);
         float[] logits = infer(mel);
         return to_analytics(logits);
