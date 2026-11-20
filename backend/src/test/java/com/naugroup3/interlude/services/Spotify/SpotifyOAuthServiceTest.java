@@ -28,51 +28,52 @@ class SpotifyOAuthServiceTest {
     private static final String CLIENT_SECRET = "test-client-secret";
     private static final String REDIRECT_URI = "http://127.0.0.1:8082/auth/spotify/callback";
 
-    private MockRestServiceServer mockServer;
+    private MockRestServiceServer mock_server;
     private SpotifyOAuthService service;
 
     @BeforeEach
-    void setUp( ) {
-        RestClient.Builder builder = RestClient.builder( );
-        mockServer = MockRestServiceServer.bindTo( builder ).build( );
-        service = new SpotifyOAuthService( CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, builder.build( ) );
+    void setUp() {
+        RestClient.Builder builder = RestClient.builder();
+        mock_server = MockRestServiceServer.bindTo(builder).build();
+        service = new SpotifyOAuthService(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, builder.build());
     }
 
     @AfterEach
-    void verifyRequests( ) {
-        mockServer.verify( );
+    void verifyRequests() {
+        mock_server.verify();
     }
 
     @Test
-    void builds_authorization_url_with_required_query_parameters( ) {
-        String authorizationUrl = service.buildAuthorizationUrl( "random-state" );
-        var query = UriComponentsBuilder.fromUriString( authorizationUrl )
-            .build( true )
-            .getQueryParams( );
+    void builds_authorization_url_with_required_query_parameters() {
+        String authorization_url = service.buildAuthorizationUrl("random-state");
+        var query = UriComponentsBuilder.fromUriString(authorization_url)
+            .build(true)
+            .getQueryParams();
 
-        assertThat( authorizationUrl ).startsWith( "https://accounts.spotify.com/authorize?" );
-        assertThat( query.getFirst( "response_type" ) ).isEqualTo( "code" );
-        assertThat( query.getFirst( "client_id" ) ).isEqualTo( CLIENT_ID );
-        assertThat( query.getFirst( "redirect_uri" ) ).isEqualTo( REDIRECT_URI );
-        assertThat( query.getFirst( "state" ) ).isEqualTo( "random-state" );
-        assertThat( query.getFirst( "scope" ) )
-            .contains( "user-read-currently-playing" )
-            .contains( "user-read-recently-played" );
+        assertThat(authorization_url).startsWith("https://accounts.spotify.com/authorize?");
+        assertThat(query.getFirst("response_type")).isEqualTo("code");
+        assertThat(query.getFirst("client_id")).isEqualTo(CLIENT_ID);
+        assertThat(query.getFirst("redirect_uri")).isEqualTo(REDIRECT_URI);
+        assertThat(query.getFirst("state")).isEqualTo("random-state");
+        assertThat(query.getFirst("scope"))
+            .contains("user-read-currently-playing")
+            .contains("user-read-recently-played");
     }
 
     @Test
-    void exchanges_authorization_code_for_tokens( ) {
-        String basicCredentials = Base64.getEncoder()
-            .encodeToString( ( CLIENT_ID + ":" + CLIENT_SECRET ).getBytes( StandardCharsets.UTF_8 ) );
-        mockServer.expect( requestTo( "https://accounts.spotify.com/api/token" ) )
-            .andExpect( method( HttpMethod.POST ) )
-            .andExpect( header( HttpHeaders.AUTHORIZATION, "Basic " + basicCredentials ) )
-            .andExpect( content( ).contentTypeCompatibleWith( MediaType.APPLICATION_FORM_URLENCODED ) )
-            .andExpect( content( ).formDataContains( Map.of(
+    void exchanges_authorization_code_for_tokens() {
+        String basic_credentials = Base64.getEncoder()
+            .encodeToString((CLIENT_ID + ":" + CLIENT_SECRET).getBytes(StandardCharsets.UTF_8));
+
+        mock_server.expect(requestTo("https://accounts.spotify.com/api/token"))
+            .andExpect(method(HttpMethod.POST))
+            .andExpect(header(HttpHeaders.AUTHORIZATION, "Basic " + basic_credentials))
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_FORM_URLENCODED))
+            .andExpect(content().formDataContains(Map.of(
                 "grant_type", "authorization_code",
                 "code", "test-code",
-                "redirect_uri", REDIRECT_URI ) ) )
-            .andRespond( withSuccess( """
+                "redirect_uri", REDIRECT_URI)))
+            .andRespond(withSuccess("""
                 {
                   "access_token": "access-token",
                   "token_type": "Bearer",
@@ -80,14 +81,22 @@ class SpotifyOAuthServiceTest {
                   "expires_in": 3600,
                   "refresh_token": "refresh-token"
                 }
-                """, MediaType.APPLICATION_JSON ) );
+                """, MediaType.APPLICATION_JSON));
 
-        SpotifyTokenResponse tokens = service.exchangeCodeForTokens( "test-code" );
+        SpotifyTokenResponse tokens = service.exchangeCodeForTokens("test-code");
 
-        assertThat( tokens.accessToken( ) ).isEqualTo( "access-token" );
-        assertThat( tokens.tokenType( ) ).isEqualTo( "Bearer" );
-        assertThat( tokens.scope( ) ).isEqualTo( "user-read-currently-playing" );
-        assertThat( tokens.expiresIn( ) ).isEqualTo( 3600 );
-        assertThat( tokens.refreshToken( ) ).isEqualTo( "refresh-token" );
+        assertThat(tokens.accessToken()).isEqualTo("access-token");
+        assertThat(tokens.tokenType()).isEqualTo("Bearer");
+        assertThat(tokens.scope()).isEqualTo("user-read-currently-playing");
+        assertThat(tokens.expiresIn()).isEqualTo(3600);
+        assertThat(tokens.refreshToken()).isEqualTo("refresh-token");
+    }
+
+    @Test
+    void refreshes_access_token() {
+        mock_server.expect(requestTo("https://accounts.spotify.com/api/token"))
+            .andExpect(content().formDataContains(Map.of("grant_type", "refresh_token", "refresh_token", "refresh")))
+            .andRespond(withSuccess("{\"access_token\": \"new\", \"expires_in\": 3600}", MediaType.APPLICATION_JSON));
+        assertThat(service.refreshAccessToken("refresh").accessToken()).isEqualTo("new");
     }
 }
