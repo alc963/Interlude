@@ -36,20 +36,21 @@ class JWTUtilsTest {
 
     private static String token_with(String secret, String subject, Date expiration) {
         return Jwts.builder()
-            .setSubject(subject)
-            .setIssuedAt(new Date())
-            .setExpiration(expiration)
-            .signWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
-            .compact();
+                .setSubject(subject)
+                .setIssuedAt(new Date())
+                .setExpiration(expiration)
+                .signWith(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
+                .compact();
     }
 
     @Test
-    void generated_token_expires_in_sixty_days() {
+    void generated_token_uses_configured_expiration() {
+        ReflectionTestUtils.setField(jwt_utils, "expiration_time_ms", 1000L * 60 * 60 * 24 * 60);
         final String token = jwt_utils.generate_token("user@example.com");
         final long sixty_days_ms = 1000L * 60 * 60 * 24 * 60;
         final long exp = Jwts.parserBuilder()
-            .setSigningKey(Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8)))
-            .build().parseClaimsJws(token).getBody().getExpiration().getTime();
+                .setSigningKey(Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8)))
+                .build().parseClaimsJws(token).getBody().getExpiration().getTime();
         assertThat(exp - System.currentTimeMillis()).isBetween(sixty_days_ms - 5_000, sixty_days_ms);
     }
 
@@ -70,12 +71,13 @@ class JWTUtilsTest {
         final String token = token_with(SECRET, "user@example.com", new Date(System.currentTimeMillis() - 60_000));
         assertThatThrownBy(() -> jwt_utils.extract_email(token)).isInstanceOf(ExpiredJwtException.class);
         assertThatThrownBy(() -> jwt_utils.validate_token(token, user("user@example.com")))
-            .isInstanceOf(ExpiredJwtException.class);
+                .isInstanceOf(ExpiredJwtException.class);
     }
 
     @Test
     void rejects_token_signed_with_another_secret() {
-        final String token = token_with(OTHER_SECRET, "user@example.com", new Date(System.currentTimeMillis() + 60_000));
+        final String token = token_with(OTHER_SECRET, "user@example.com",
+                new Date(System.currentTimeMillis() + 60_000));
         assertThatThrownBy(() -> jwt_utils.extract_email(token)).isInstanceOf(JwtException.class);
     }
 
@@ -84,9 +86,9 @@ class JWTUtilsTest {
         final String token = jwt_utils.generate_token("user@example.com");
         final String[] parts = token.split("\\.");
         final String forged_payload = java.util.Base64.getUrlEncoder().withoutPadding()
-            .encodeToString("{\"sub\":\"admin@example.com\",\"exp\":99999999999}".getBytes(StandardCharsets.UTF_8));
+                .encodeToString("{\"sub\":\"admin@example.com\",\"exp\":99999999999}".getBytes(StandardCharsets.UTF_8));
         assertThatThrownBy(() -> jwt_utils.extract_email(parts[0] + "." + forged_payload + "." + parts[2]))
-            .isInstanceOf(JwtException.class);
+                .isInstanceOf(JwtException.class);
     }
 
     @Test
