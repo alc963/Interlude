@@ -12,6 +12,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
     boolean existsByEmailIgnoreCase(String email);
     boolean existsByUsername(String username);
+    List<User> findByIdNotOrderByUsernameAsc(Long id);
 
     @Query("SELECT u.username FROM User u")
     List<String> findAllUsernames();
