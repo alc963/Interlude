@@ -57,6 +57,11 @@ public class RefreshTokenService {
     }
 
     @Transactional
+    public int deleteByToken(String token) {
+        return refresh_token_repository.deleteByToken(token);
+    }
+
+    @Transactional
     public int deleteByUserId(Long userId) {
         return user_repository.findById(userId)
                 .map(refresh_token_repository::deleteByUser)

@@ -112,6 +112,12 @@ public class AuthenticationController {
         return ResponseEntity.ok(create_token_response(refresh_token.getUser(), refresh_token.getToken()));
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@Valid @RequestBody TokenRefreshRequest request) {
+        refresh_token_service.deleteByToken(request.refreshToken());
+        return ResponseEntity.noContent().build();
+    }
+
     private TokenResponse create_token_response(User user) {
         final RefreshToken refresh_token = refresh_token_service.createRefreshToken(user.getId());
         return create_token_response(user, refresh_token.getToken());
