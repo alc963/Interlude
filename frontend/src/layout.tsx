@@ -1,8 +1,15 @@
-import { Link, NavLink, Outlet } from 'react-router'
+import { Link, NavLink, Outlet, useNavigate } from 'react-router'
 import useAuthenticated from './hooks/useAuthenticated'
+import { ApiBridge } from './bridge/api_bridge'
 
 export default function Layout() {
   const { authenticated } = useAuthenticated();
+  const navigate = useNavigate();
+
+  async function logout() {
+    await ApiBridge.logout();
+    navigate('/');
+  }
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -21,7 +28,20 @@ export default function Layout() {
             </NavLink>
             <Link to="/Signup" className="btn-primary !px-4 !py-1.5 text-sm">Sign up</Link>
           </>
-          : null}
+          :
+          <>
+            <NavLink
+              to="/settings"
+              className={({ isActive }) =>
+                `text-sm transition-colors ${isActive ? 'text-accent' : 'text-muted hover:text-text'}`
+              }
+            >
+              Settings
+            </NavLink>
+            <button onClick={logout} className="text-sm text-muted transition-colors hover:text-text">
+              Log out
+            </button>
+          </>}
         </div>
       </nav>
 

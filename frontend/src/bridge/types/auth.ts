@@ -17,6 +17,11 @@ export interface LoginRequest {
 }
 export type LoginResponse = AuthTokenResponse;
 
+export interface MeResponse {
+    username: string;
+    email: string;
+}
+
 export interface UsernameCheckResponse {
     exists: boolean;
 }
