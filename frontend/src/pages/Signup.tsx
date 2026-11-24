@@ -11,10 +11,44 @@ export default function Signup() {
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
 
-  function validInput()
+  function validInput(input: string, validator: boolean)
   {
-    const problem = validate_username(username) ?? validate_email(email) ?? validate_password(password)
-    return setError(problem)
+    let problem
+    
+    if (validator)
+    {
+      problem = validate_email(input)
+    } else {
+      problem = validate_password(input)
+    }
+    
+    if (problem) return setError(problem)
+
+    setError(null)
+    validUser(username)
+  }
+
+  async function validUser(username: string)
+  {
+    const problem = validate_username(username)
+    if (problem) 
+    {
+      return setError(problem)
+    } else {
+      const used = await ApiBridge.username_check(username)
+      if (used instanceof Response)
+      {
+        return setError("Something went wrong checking the username")
+      }
+
+      if (used.exists) 
+      {
+        return setError("This Username Already Exists")
+      } else {
+        return setError(null)
+      }
+    }
+    
   }
 
   async function submit(e: SubmitEvent) {
@@ -43,11 +77,11 @@ export default function Signup() {
       <form onSubmit={submit} noValidate className="w-full max-w-sm space-y-4">
         <h1 className="text-2xl font-bold">Sign up</h1>
         <input className="input" placeholder="Username" autoComplete="username"
-          value={username} onChange={(e) => {setUsername(e.target.value); validInput()}} />
+          value={username} onChange={(e) => {setUsername(e.target.value); validUser(e.target.value)}} />
         <input className="input" type="email" placeholder="Email" autoComplete="email"
-          value={email} onChange={(e) => {setEmail(e.target.value); validInput()}} />
+          value={email} onChange={(e) => {setEmail(e.target.value); validInput(e.target.value, true)}} />
         <input className="input" type="password" placeholder="Password (8+ characters)" autoComplete="new-password"
-          value={password} onChange={(e) => {setPassword(e.target.value); validInput()}} />
+          value={password} onChange={(e) => {setPassword(e.target.value); validInput(e.target.value, false)}} />
         {error && <p role="alert" className="text-sm text-danger">{error}</p>}
         <button className="btn-primary w-full" disabled={busy}>{busy ? 'Creating account…' : 'Create account'}</button>
         <p className="text-center text-sm text-muted">
