@@ -215,7 +215,6 @@ export const ApiBridge = {
 
     top_artist_summary(request: TopArtistSummaryRequest) {
         return ApiBridge.get<TopArtistSummaryResponse>("/me/top/artists/summary", clean_request(request));
-        // return mockTopArtistSummary;
     },
 
     recommendations(request: RecommendationsRequest = {}) {
