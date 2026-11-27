@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.naugroup3.interlude.services.ITunes.ITunesDatabase;
+import com.naugroup3.interlude.services.ITunes.ITunes;
 
 import org.springframework.boot.CommandLineRunner;
 
@@ -13,11 +13,11 @@ import org.springframework.boot.CommandLineRunner;
 @RestController
 public class InterludeApplication implements CommandLineRunner {
 
-	private final ITunesDatabase itunes_database;
+	private final ITunes itunes;
 	private boolean is_ready = false;
 
-    public InterludeApplication(ITunesDatabase itunes_database) {
-        this.itunes_database = itunes_database;
+    public InterludeApplication(ITunes itunes) {
+        this.itunes = itunes;
     }
 
 	@GetMapping("/")
@@ -31,6 +31,7 @@ public class InterludeApplication implements CommandLineRunner {
 	}
 
 	public void run(String args[]) throws Exception {
+		itunes.enqueue_all_unprocessed_tracks();
 		System.out.println("Ready...");
 		is_ready = true;
 	}

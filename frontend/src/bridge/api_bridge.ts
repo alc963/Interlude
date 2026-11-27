@@ -200,7 +200,7 @@ export const ApiBridge = {
     spotify_recently_played(request: RecentlyPlayedRequest = {}) {
         return ApiBridge.get<RecentlyPlayedResponse>("/spotify/recently-played", clean_request(request));
     },
-    
+
     async top_artists_summary(): ApiResponse<TopArtistSummaryResponse> {
         return ApiBridge.get<TopArtistSummaryResponse>("/me/top/artists/summary");
         // return mockTopArtistSummary;
