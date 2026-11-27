@@ -1,5 +1,5 @@
 import { local_storage_get, local_storage_remove, local_storage_set } from "./local_storage";
-import type { AuthTokenResponse, LoginRequest, LoginResponse, SignupRequest, SignupResponse, UsernameCheckResponse } from "./types/auth";
+import type { AuthTokenResponse, LoginRequest, LoginResponse, MeResponse, SignupRequest, SignupResponse, UsernameCheckResponse } from "./types/auth";
 import { jwt_expired } from "./validator";
 import type { CurrentlyPlayingResponse, RecentlyPlayedRequest, RecentlyPlayedResponse } from "./types/spotify";
 import type { TopArtistSummaryResponse } from "./types/interlude";
@@ -152,6 +152,28 @@ export const ApiBridge = {
     },
     async login(request: LoginRequest): ApiResponse<LoginResponse> {
         return await ApiBridge.post_token("/auth/login", request);
+    },
+
+    async logout(): Promise<void> {
+        const refresh_token = local_storage_get(REFRESH_TOKEN_LOCAL_STORAGE_KEY);
+        // always clear locally, even if the server call fails
+        try {
+            if (refresh_token) {
+                await fetch(`${BASE_URL}/auth/logout`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ refreshToken: refresh_token }),
+                });
+            }
+        } catch {
+            // ignore network errors
+        } finally {
+            clear_auth();
+        }
+    },
+
+    me(): ApiResponse<MeResponse> {
+        return ApiBridge.get<MeResponse>("/me");
     },
 
     async username_check(username: string): ApiResponse<UsernameCheckResponse> {
