@@ -3,6 +3,8 @@ import type { AuthTokenResponse, LoginRequest, LoginResponse, MeResponse, Signup
 import { jwt_expired } from "./validator";
 import type { CurrentlyPlayingResponse, RecentlyPlayedRequest, RecentlyPlayedResponse } from "./types/spotify";
 import type { RecommendationsRequest, RecommendationsResponse, TopAlbumsResponse, TopArtistSummaryRequest, TopArtistSummaryResponse, TopArtistsResponse, TopItemsRequest, TopTracksResponse } from "./types/interlude";
+import type { FriendRequestResponse, FriendResponse, PendingRequestsResponse } from "./types/friends";
+import type { UserResponse } from "./types/users";
 // import { mockTopArtistSummary } from "./mock_data";
 
 type ApiResponse<T> = Promise<T | Response>;
@@ -78,13 +80,7 @@ export const ApiBridge = {
         }
     },
 
-    async get<Res>(path: string, params: Record<string, string> = {}, require_auth = true): ApiResponse<Res> {
-        const query = new URLSearchParams(params).toString();
-        const fetch_if_authenticated = async () => fetch(`${BASE_URL}${path}${query ? `?${query}` : ""}`, {
-            headers: ApiBridge.auth_headers(),
-            credentials: "include"
-        });
-
+    async fetch_with_auth(send: () => Promise<Response>, require_auth: boolean): Promise<Response> {
         if (require_auth) {
             const refreshed = await ApiBridge.refresh_if_needed();
             if (!refreshed && ApiBridge.jwt === null) {
@@ -92,42 +88,46 @@ export const ApiBridge = {
             }
         }
 
-        let response = await fetch_if_authenticated();
+        let response = await send();
         if (require_auth && response.status === 401) {
             const refreshed = await ApiBridge.refresh_if_needed(true);
             if (refreshed) {
-                response = await fetch_if_authenticated();
+                response = await send();
             }
         }
+        return response;
+    },
+
+    async get<Res>(path: string, params: Record<string, string> = {}, require_auth = true): ApiResponse<Res> {
+        const query = new URLSearchParams(params).toString();
+        const response = await ApiBridge.fetch_with_auth(() => fetch(`${BASE_URL}${path}${query ? `?${query}` : ""}`, {
+            headers: ApiBridge.auth_headers(),
+            credentials: "include"
+        }), require_auth);
 
         if (!response.ok || response.status === 204) return response;
         return await response.json();
     },
 
     async post<Req, Res>(path: string, body: Req, only_text = false, require_auth = true): ApiResponse<Res> {
-        const fetch_if_authenticated = async () => fetch(`${BASE_URL}${path}`, {
+        const response = await ApiBridge.fetch_with_auth(() => fetch(`${BASE_URL}${path}`, {
             method: "POST",
             headers: { "Content-Type": "application/json", ...ApiBridge.auth_headers() },
             body: JSON.stringify(body),
-        });
+        }), require_auth);
 
-        if (require_auth) {
-            const refreshed = await ApiBridge.refresh_if_needed();
-            if (!refreshed && ApiBridge.jwt === null) {
-                return new Response(null, { status: 401, statusText: "Unauthorized" });
-            }
-        }
-
-        let response = await fetch_if_authenticated();
-        if (require_auth && response.status === 401) {
-            const refreshed = await ApiBridge.refresh_if_needed(true);
-            if (refreshed) {
-                response = await fetch_if_authenticated();
-            }
-        }
-
-        if (!response.ok) return response;
+        if (!response.ok || response.status === 204) return response;
         if (only_text) return await response.text() as Res;
+        return await response.json();
+    },
+
+    async delete<Res>(path: string, require_auth = true): ApiResponse<Res> {
+        const response = await ApiBridge.fetch_with_auth(() => fetch(`${BASE_URL}${path}`, {
+            method: "DELETE",
+            headers: ApiBridge.auth_headers(),
+        }), require_auth);
+
+        if (!response.ok || response.status === 204) return response;
         return await response.json();
     },
 
@@ -219,5 +219,45 @@ export const ApiBridge = {
 
     recommendations(request: RecommendationsRequest = {}) {
         return ApiBridge.get<RecommendationsResponse>("/recommendations", clean_request(request));
+    },
+
+    friends() {
+        return ApiBridge.get<FriendResponse[]>("/friends");
+    },
+
+    friend(id: number) {
+        return ApiBridge.get<FriendResponse>(`/friends/${id}`);
+    },
+
+    friend_remove(id: number) {
+        return ApiBridge.delete<void>(`/friends/${id}`);
+    },
+
+    friend_requests() {
+        return ApiBridge.get<PendingRequestsResponse>("/friends/requests");
+    },
+
+    friend_request_send(id: number) {
+        return ApiBridge.post<undefined, FriendRequestResponse>(`/friends/request/${id}`, undefined);
+    },
+
+    friend_request_accept(id: number) {
+        return ApiBridge.post<undefined, FriendResponse>(`/friends/request/accept/${id}`, undefined);
+    },
+
+    friend_request_decline(id: number) {
+        return ApiBridge.post<undefined, void>(`/friends/request/decline/${id}`, undefined);
+    },
+
+    friend_request_cancel(id: number) {
+        return ApiBridge.post<undefined, void>(`/friends/request/cancel/${id}`, undefined);
+    },
+
+    users() {
+        return ApiBridge.get<UserResponse[]>("/users");
+    },
+
+    user(id: number) {
+        return ApiBridge.get<UserResponse>(`/users/${id}`);
     },
 };
