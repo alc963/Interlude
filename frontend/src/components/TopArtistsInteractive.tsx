@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { TopArtistSummaryResponse } from "../bridge/types/interlude";
+import type { TopArtistsWithSummary } from "../bridge/types/interlude";
 import Table from "./table/Table";
 
 const albumColumns = [
@@ -16,7 +16,7 @@ const trackColumns = [
 ];
 
 type TopArtistsInteractiveProps = {
-  data: TopArtistSummaryResponse
+  data: TopArtistsWithSummary
 };
 
 export default function TopArtistsInteractive({ data }: TopArtistsInteractiveProps) {
@@ -25,16 +25,16 @@ export default function TopArtistsInteractive({ data }: TopArtistsInteractivePro
 
   const albumRows = selectedArtist?.albums.map((album, index) => ({
     rank: index + 1,
-    art: album.albumArtUrl ? (
-      <img className="h-20 w-20 object-cover" src={album.albumArtUrl} alt={`${album.name} cover`} />
+    art: album.artworkUrl ? (
+      <img className="h-20 w-20 object-cover" src={album.artworkUrl} alt={`${album.name} cover`} />
     ) : null,
     name: album.name,
-    playCount: album.playCount ?? 0,
+    playCount: album.playCount,
   })) ?? [];
   const trackRows = selectedArtist?.tracks.map((track, index) => ({
     rank: index + 1,
     name: track.name,
-    playCount: track.playCount ?? 0,
+    playCount: track.playCount,
   })) ?? [];
 
   return (
@@ -53,7 +53,7 @@ export default function TopArtistsInteractive({ data }: TopArtistsInteractivePro
             <div>
               <img
                 className={`max-w-none transition-[width] duration-300 ease-in-out motion-reduce:transition-none ${index === selected_index ? "w-[200px]" : "w-[90px]"}`}
-                src={artist.artistArtUrl}
+                src={artist.artworkUrl ?? undefined}
                 alt="artist-image" />
             </div>
           </div>

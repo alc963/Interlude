@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { ApiBridge } from '../../bridge/api_bridge';
-import type { Album } from '../../bridge/types/music';
+import type { TopAlbumsResponse } from '../../bridge/types/interlude';
 import Table from './Table';
 
 type AlbumsWidgetProps = {
@@ -8,14 +8,10 @@ type AlbumsWidgetProps = {
 };
 
 type AlbumRow = {
-  pic: string;
+  pic: ReactNode;
   album: string;
   artist: string;
   playcount: number;
-};
-
-type TopAlbum = Album & {
-  playCount?: number;
 };
 
 const columns = [
@@ -27,8 +23,8 @@ const columns = [
 
 const MAX_ROWS = 10;
 
-async function getTopAlbums(): Promise<TopAlbum[]> {
-  const albums = await ApiBridge.get<TopAlbum[]>('/me/top/albums');
+async function getTopAlbums(limit: number): Promise<TopAlbumsResponse> {
+  const albums = await ApiBridge.top_albums({ limit });
   if (albums instanceof Response) {
     throw new Error(`Failed to load top albums (${albums.status})`);
   }
@@ -43,14 +39,16 @@ function AlbumsWidget({ albumAmount = 5 }: AlbumsWidgetProps) {
     let cancelled = false;
     const num = MAX_ROWS < albumAmount ? MAX_ROWS : albumAmount;
 
-    getTopAlbums().then((albums: TopAlbum[]) => {
+    getTopAlbums(num).then((albums) => {
       if (!cancelled) {
         setRows(
-          albums.slice(0, num).map((album) => ({
-            pic: album.albumArtUrl ?? '',
+          albums.map((album) => ({
+            pic: album.artworkUrl ? (
+              <img className="h-12 w-12 object-cover" src={album.artworkUrl} alt={`${album.name} cover`} />
+            ) : null,
             album: album.name,
             artist: album.artists.map((artist) => artist.name).join(', '),
-            playcount: album.playCount ?? 0,
+            playcount: album.playCount,
           })),
         );
         setError(null);

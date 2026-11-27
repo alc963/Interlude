@@ -2,7 +2,7 @@ import { local_storage_get, local_storage_remove, local_storage_set } from "./lo
 import type { AuthTokenResponse, LoginRequest, LoginResponse, MeResponse, SignupRequest, SignupResponse, UsernameCheckResponse } from "./types/auth";
 import { jwt_expired } from "./validator";
 import type { CurrentlyPlayingResponse, RecentlyPlayedRequest, RecentlyPlayedResponse } from "./types/spotify";
-import type { TopArtistSummaryResponse } from "./types/interlude";
+import type { RecommendationsRequest, RecommendationsResponse, TopAlbumsResponse, TopArtistSummaryRequest, TopArtistSummaryResponse, TopArtistsResponse, TopItemsRequest, TopTracksResponse } from "./types/interlude";
 // import { mockTopArtistSummary } from "./mock_data";
 
 type ApiResponse<T> = Promise<T | Response>;
@@ -201,8 +201,23 @@ export const ApiBridge = {
         return ApiBridge.get<RecentlyPlayedResponse>("/spotify/recently-played", clean_request(request));
     },
     
-    async top_artists_summary(): ApiResponse<TopArtistSummaryResponse> {
-        return ApiBridge.get<TopArtistSummaryResponse>("/me/top/artists/summary");
-        // return mockTopArtistSummary;
+    top_tracks(request: TopItemsRequest = {}) {
+        return ApiBridge.get<TopTracksResponse>("/me/top/tracks", clean_request(request));
+    },
+
+    top_artists(request: TopItemsRequest = {}) {
+        return ApiBridge.get<TopArtistsResponse>("/me/top/artists", clean_request(request));
+    },
+
+    top_albums(request: TopItemsRequest = {}) {
+        return ApiBridge.get<TopAlbumsResponse>("/me/top/albums", clean_request(request));
+    },
+
+    top_artist_summary(request: TopArtistSummaryRequest) {
+        return ApiBridge.get<TopArtistSummaryResponse>("/me/top/artists/summary", clean_request(request));
+    },
+
+    recommendations(request: RecommendationsRequest = {}) {
+        return ApiBridge.get<RecommendationsResponse>("/recommendations", clean_request(request));
     },
 };
