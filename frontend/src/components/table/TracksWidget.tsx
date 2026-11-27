@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ApiBridge } from '../../bridge/api_bridge';
-import type { Track } from '../../bridge/types/music';
+import type { TopTrack } from '../../bridge/types/interlude';
 import Table from './Table';
 
 type TracksWidgetProps = {
@@ -8,35 +8,29 @@ type TracksWidgetProps = {
 };
 
 type TrackRow = {
+  rank: number;
   title: string;
   artist: string;
   album: string;
+  playcount: number;
 };
 
 const columns = [
+  { key: 'rank', label: '' },
   { key: 'title', label: 'Title' },
   { key: 'artist', label: 'Artist(s)' },
   { key: 'album', label: 'Album' },
+  { key: 'playcount', label: 'Plays' },
 ];
 
 const MAX_ROWS = 10;
 
-async function getTopTracks(): Promise<Track[]> {
-  const track = await ApiBridge.spotify_currently_playing();
-  if (track instanceof Response) {
-    throw new Error(`Not listening to any track at the moment`);
+async function getTopTracks(limit: number): Promise<TopTrack[]> {
+  const tracks = await ApiBridge.top_tracks({ limit });
+  if (tracks instanceof Response) {
+    throw new Error(`Failed to load top tracks (${tracks.status})`);
   }
-  return [{
-    name: track.item?.name ?? "",
-    artists: track.item?.artists ?? [],
-    album: track.item?.album.name ?? ""
-  }];
-  // TODO uncomment original functionality
-  // const tracks = await ApiBridge.get<Track[]>('/me/top/tracks');
-  // if (tracks instanceof Response) {
-  //   throw new Error(`Failed to load top tracks (${tracks.status})`);
-  // }
-  // return tracks;
+  return tracks;
 }
 
 function TracksWidget({ trackAmount = 5 }: TracksWidgetProps) {
@@ -47,13 +41,15 @@ function TracksWidget({ trackAmount = 5 }: TracksWidgetProps) {
     let cancelled = false;
     const num = MAX_ROWS < trackAmount ? MAX_ROWS : trackAmount;
 
-    getTopTracks().then((tracks: Track[]) => {
+    getTopTracks(num).then((tracks: TopTrack[]) => {
       if (!cancelled) {
         setRows(
-          tracks.slice(0, num).map((track) => ({
+          tracks.map((track) => ({
+            rank: track.rank,
             title: track.name,
             artist: track.artists.map((artist) => artist.name).join(', '),
-            album: track.album,
+            album: track.album ?? '',
+            playcount: track.playCount,
           })),
         );
         setError(null);

@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { ApiBridge } from '../../bridge/api_bridge';
-import type { Artist } from '../../bridge/types/music';
+import type { TopArtistsResponse } from '../../bridge/types/interlude';
 import Table from './Table';
 
 type ArtistsWidgetProps = {
@@ -8,13 +8,9 @@ type ArtistsWidgetProps = {
 };
 
 type ArtistRow = {
-  pic: string;
+  pic: ReactNode;
   artist: string;
   playcount: number;
-};
-
-type TopArtist = Artist & {
-  playCount?: number;
 };
 
 const columns = [
@@ -25,8 +21,8 @@ const columns = [
 
 const MAX_ROWS = 10;
 
-async function getTopArtists(): Promise<TopArtist[]> {
-  const artists = await ApiBridge.get<TopArtist[]>('/me/top/artists');
+async function getTopArtists(limit: number): Promise<TopArtistsResponse> {
+  const artists = await ApiBridge.top_artists({ limit });
   if (artists instanceof Response) {
     throw new Error(`Failed to load top artists (${artists.status})`);
   }
@@ -41,13 +37,15 @@ function ArtistsWidget({ artistAmount = 5 }: ArtistsWidgetProps) {
     let cancelled = false;
     const num = MAX_ROWS < artistAmount ? MAX_ROWS : artistAmount;
 
-    getTopArtists().then((artists: TopArtist[]) => {
+    getTopArtists(num).then((artists) => {
       if (!cancelled) {
         setRows(
-          artists.slice(0, num).map((artist) => ({
-            pic: artist.artistArtUrl ?? '',
+          artists.map((artist) => ({
+            pic: artist.artworkUrl ? (
+              <img className="h-12 w-12 object-cover" src={artist.artworkUrl} alt={artist.name} />
+            ) : null,
             artist: artist.name,
-            playcount: artist.playCount ?? 0,
+            playcount: artist.playCount,
           })),
         );
         setError(null);

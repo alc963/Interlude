@@ -2,6 +2,7 @@ package com.naugroup3.interlude;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -10,6 +11,7 @@ import com.naugroup3.interlude.services.ITunes.ITunes;
 import org.springframework.boot.CommandLineRunner;
 
 @SpringBootApplication
+@EnableScheduling
 @RestController
 public class InterludeApplication implements CommandLineRunner {
 
