@@ -1,0 +1,20 @@
+DROP TABLE itunes_track_processing;
+
+CREATE TABLE itunes_track_sample_mood (
+	id BIGINT PRIMARY KEY,
+	mood VARCHAR(50) NOT NULL,
+	tempo DOUBLE PRECISION NOT NULL,
+	brightness DOUBLE PRECISION NOT NULL,
+	energy DOUBLE PRECISION NOT NULL,
+	key VARCHAR(20) NOT NULL,
+	acousticness DOUBLE PRECISION NOT NULL,
+	instrumentalness DOUBLE PRECISION NOT NULL,
+	liveness DOUBLE PRECISION NOT NULL,
+	danceability DOUBLE PRECISION NOT NULL,
+	arousal DOUBLE PRECISION NOT NULL,
+	valence DOUBLE PRECISION NOT NULL,
+	speechiness DOUBLE PRECISION NOT NULL,
+	created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+	CONSTRAINT fk_itunes_track_sample_mood_track
+		FOREIGN KEY (id) REFERENCES itunes_track (id)
+);
